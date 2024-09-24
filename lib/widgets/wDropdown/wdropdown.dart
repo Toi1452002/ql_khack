@@ -3,6 +3,8 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:ql_khach/utils/extension.dart';
 import 'package:ql_khach/widgets/widgets.dart';
 
+import 'dropdown_textfield_search.dart';
+
 export 'dropdown_item.dart';
 export 'wdropdown_select.dart';
 class Wdropdown extends StatelessWidget {
@@ -29,6 +31,7 @@ class Wdropdown extends StatelessWidget {
   String? label;
 
   final txtSearch = TextEditingController();
+  final focus = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +47,13 @@ class Wdropdown extends StatelessWidget {
           ),
         DropdownButtonHideUnderline(
           child: DropdownButton2(
+            focusNode: focus,
             isExpanded: true,
             onMenuStateChange: (open) {
               if (!open) {
                 txtSearch.clear();
+              }else{
+                focus.requestFocus();
               }
             },
             hint: Text(hint),
@@ -57,13 +63,10 @@ class Wdropdown extends StatelessWidget {
                     searchInnerWidgetHeight: 20,
                     searchInnerWidget: Padding(
                       padding: const EdgeInsets.all(3.0),
-                      child: Wtextfield(
-                        height: 25,
+                      child: DropdownTextfieldSearch(
+                        // height: 25,
                         controller: txtSearch,
-                        // suffixIcon: const Icon(
-                        //   Icons.search,
-                        //   size: 15,
-                        // ),
+                        focusNode: focus,
                       ),
                     ),
                     searchController: txtSearch,
@@ -77,15 +80,18 @@ class Wdropdown extends StatelessWidget {
                 height: 25,
                 padding: const EdgeInsets.only(left: 5),
                 selectedMenuItemBuilder: (context, e) {
-                  return Container(
-                    height: 25,
-                    padding: const EdgeInsets.only(left: 5),
-                    alignment: Alignment.centerLeft,
-                    color: color.primary,
-                    child: Text(
-                      softWrap: false,
-                      data.firstWhere((e) =>  e.value == selected).title,
-                      style: const TextStyle(color: Colors.white),
+                  return Focus(
+                    focusNode: search ? null : focus,
+                    child: Container(
+                      height: 25,
+                      padding: const EdgeInsets.only(left: 5),
+                      alignment: Alignment.centerLeft,
+                      color: color.primary,
+                      child: Text(
+                        softWrap: false,
+                        data.firstWhere((e) =>  e.value == selected).title,
+                        style: const TextStyle(color: Colors.white),
+                      ),
                     ),
                   );
                 },
@@ -102,10 +108,14 @@ class Wdropdown extends StatelessWidget {
             ),
             dropdownStyleData: DropdownStyleData(
                 width: screenSmall ? 150 : null,
+                isOverButton: search,
                 maxHeight: 200,
                 elevation: 2,
                 padding: EdgeInsets.zero,
-                decoration: BoxDecoration(
+                scrollbarTheme: ScrollbarThemeData(
+                  thickness: WidgetStatePropertyAll(3)
+                ),
+                decoration: const BoxDecoration(
                   color: Colors.white,
                 )),
             value: lstSelected==null ? selected : lstSelected!.last,

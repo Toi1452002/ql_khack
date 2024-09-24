@@ -46,7 +46,7 @@ class KhachEdit extends ConsumerWidget {
         userNameCreated: ref.watch(userProvider)!.username,
         userNameModified: ref.watch(userProvider)!.username,
         dateModified: Helper.yMd(DateTime.now(),hour: true),
-        ghiChu: txtGhiChu.text,
+        ghiChu: txtGhiChu.text.toString(),
         khuVuc: txtKhuVuc.text,
         theoDoi: tdoi ? 1 : 0,
         dienThoai: txtDienThoai.text);

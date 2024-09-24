@@ -66,7 +66,7 @@ class Khach {
         tenCty: map['TenCty'] ?? '',
         maSP: map['MaSP'] ?? '',
         soTien: map['SoTien'].toString().toDouble,
-        ghiChu: map['GhiChu'] ?? '',
+        ghiChu: map['GhiChu'].toString() ?? '',
         khuVuc: map['KhuVuc'] ?? '',
         theoDoi: map['TheoDoi'].toString().toInt,
         dateCreated: map['DateCreated']??'',

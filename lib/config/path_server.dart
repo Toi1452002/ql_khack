@@ -1,8 +1,8 @@
 class PathServer{
   const PathServer._();
 
-  static String get  _path => "http://192.168.1.5:8000/api_qlkhach/api";
-  // static String get  _path => "http://rgb.com.vn/admin/server/api";
+  // static String get  _path => "http://192.168.1.5:8000/api_qlkhach/api";
+  static String get  _path => "http://rgb.com.vn/admin/server/api";
   // static String get home => "$_path/home";
   static String get khach => "$_path/khach.php";
   static String get hopdong => "$_path/hopdong.php";

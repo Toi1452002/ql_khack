@@ -53,7 +53,7 @@ class KhachTable extends ConsumerWidget {
         textAlign: PlutoColumnTextAlign.center,
         enableSorting: false,
         type: PlutoColumnType.text(),
-        width: 30),
+        width: 40),
     ConfigPluto.column(
         title: 'MaKH',
         field: 'MaKH',
