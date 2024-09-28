@@ -38,18 +38,18 @@ class KhachEdit extends ConsumerWidget {
     final tdoi = ref.watch(khachTheoDoiProvider);
     Khach khachEdit = Khach(
         maKH: khach == null ? 0 : khach!.maKH,
-        tenGoi: txtTenGoi.text,
-        tenMoRong: txtTenMoRong.text,
-        diaChi: txtDiaChi.text,
-        nguonLienHe: txtNguonLienHe.text,
-        tenCty: txtTenCty.text,
+        tenGoi: txtTenGoi.text.trim(),
+        tenMoRong: txtTenMoRong.text.trim(),
+        diaChi: txtDiaChi.text.trim(),
+        nguonLienHe: txtNguonLienHe.text.trim(),
+        tenCty: txtTenCty.text.trim(),
         userNameCreated: ref.watch(userProvider)!.username,
         userNameModified: ref.watch(userProvider)!.username,
         dateModified: Helper.yMd(DateTime.now(),hour: true),
-        ghiChu: txtGhiChu.text.toString(),
-        khuVuc: txtKhuVuc.text,
+        ghiChu: txtGhiChu.text.trim(),
+        khuVuc: txtKhuVuc.text.trim(),
         theoDoi: tdoi ? 1 : 0,
-        dienThoai: txtDienThoai.text);
+        dienThoai: txtDienThoai.text.trim());
     if(khach!=null){//update
       ref.read(dsKhachProvider.notifier).onUpdateKhach(khachEdit);
       Navigator.pop(context);

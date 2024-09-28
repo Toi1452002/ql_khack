@@ -35,8 +35,8 @@ class HdEdit extends ConsumerWidget {
     Hopdong hopDong = Hopdong(
         id: hopdong?.id,
         khachID: khach.maKH,
-        moTa: txtMoTa.text,
-        nguonKhach: txtNguonKhach.text,
+        moTa: txtMoTa.text.trim(),
+        nguonKhach: txtNguonKhach.text.trim(),
         doanhNghiep: dn,
         userNameCreated: user!.username,
         userNameModified: user.username,

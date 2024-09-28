@@ -56,6 +56,7 @@ class Vkhach extends ConsumerWidget {
     }
   }
 
+
   void _onKhachNgungTD(WidgetRef ref, BuildContext context){
     showDialog(context: context, builder: (_){
       return Dialog(
@@ -109,9 +110,9 @@ class Vkhach extends ConsumerWidget {
           builder: (context){
             if(size<370){
               return PopupMenuButton(offset: const Offset(30,0),color: Colors.white,itemBuilder: (context)=>[
-                PopupMenuItem(child: const Text('Thêm'),height: 35,onTap: ()=>_onNew(context),),
-                PopupMenuItem(child: const Text('Sửa'),height: 35,enabled: maKH!=null,onTap: ()=>_onEdit(ref,context),),
-                PopupMenuItem(child: const Text('Khách ngưng theo dõi'),height: 35,onTap: ()=>_onKhachNgungTD(ref,context),),
+                PopupMenuItem(height: 35,onTap: ()=>_onNew(context),child: const Text('Thêm'),),
+                PopupMenuItem(height: 35,enabled: maKH!=null,onTap: ()=>_onEdit(ref,context),child: const Text('Sửa'),),
+                PopupMenuItem(height: 35,onTap: ()=>_onKhachNgungTD(ref,context),child: const Text('Khách ngưng theo dõi'),),
               ]);
             }
             return Row(
