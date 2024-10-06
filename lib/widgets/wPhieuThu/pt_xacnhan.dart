@@ -1,8 +1,10 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ql_khach/data/data.dart';
 import 'package:ql_khach/utils/utils.dart';
 import 'package:ql_khach/providers/providers.dart';
+import 'package:ql_khach/widgets/wPhieuThu/pt_edit_phieuthu.dart';
 import 'package:ql_khach/widgets/widgets.dart';
 
 final selectCXNProvider = StateProvider.autoDispose<List<int>>((ref) {
@@ -21,6 +23,16 @@ class PtChuaxacnhanState extends ConsumerState<PtChuaxacnhan> {
   final List<int> _select = [];
   final FocusNode _focusNode = FocusNode();
 
+  void _showEdit(Phieuthu pt){
+    showDialog(context: context, builder: (context){
+      return Dialog(
+        alignment: Alignment.topCenter,
+        insetPadding: EdgeInsets.symmetric(vertical: 50,horizontal: 5),
+        child: PtEditPhieuthu(phieuthu: pt,),
+      );
+    });
+  }
+
   void _onXacNhan(WidgetRef ref) {
     _focusNode.requestFocus();
     SmartAlert().showInfo('Xác nhận đã nhận được?', focusNode: _focusNode,
@@ -29,8 +41,7 @@ class PtChuaxacnhanState extends ConsumerState<PtChuaxacnhan> {
     });
   }
   final checkBoxTheme = CheckboxThemeData(
-    side: BorderSide(width: .3),
-    // checkColor: WidgetStatePropertyAll(Colors.green.shade100),
+    side: const BorderSide(width: .3),
     fillColor: WidgetStatePropertyAll(Colors.green.shade600)
 
   );
@@ -98,45 +109,53 @@ class PtChuaxacnhanState extends ConsumerState<PtChuaxacnhan> {
               DataColumn2(label: Text('MaHD'), fixedWidth: 50),
               DataColumn2(label: Text('Ngày thu'), fixedWidth: 100),
               DataColumn2(label: Text('Tháng'), fixedWidth: 80),
+              DataColumn2(label: Text('DsThang'), fixedWidth: 80),
               DataColumn2(
                   label: Text(
                 'Tên mở rộng',
               )),
-              DataColumn2(label: Text('Người nộp')),
-              DataColumn2(label: Text('Người thu')),
+              DataColumn2(label: Text('Người nộp'), fixedWidth: 150),
+              DataColumn2(label: Text('Người thu'), fixedWidth: 100),
               DataColumn2(label: Text('Nội dung')),
               DataColumn2(
                   label: Text('Số tiền'), numeric: true, fixedWidth: 80),
             ],
             rows: List.generate(
                 wChuaXacNhan.length,
-                (i) => DataRow2(
-                        selected: _select.contains(wChuaXacNhan[i].id),
-                        onSelectChanged: (val) {
-                          if (_select.contains(wChuaXacNhan[i].id)) {
-                            _select.remove(wChuaXacNhan[i].id);
-                          } else {
-                            _select.add(wChuaXacNhan[i].id!);
-                          }
-                          setState(() {});
-                        },
-                        cells: [
-                          DataCell(_itemCenter("${i + 1}")),
-                          DataCell(_itemCenter(wChuaXacNhan[i].id.toString())),
-                          DataCell(_itemCenter(
-                              wChuaXacNhan[i].hopDongID.toString())),
-                          DataCell(Text(Helper.dMy(
-                              wChuaXacNhan[i].ngayThu))),
-                          DataCell(Text(Helper.My(wChuaXacNhan[i].thang))),
-                          DataCell(Text(wChuaXacNhan[i].tenMoRong,
-                              softWrap: false,
-                              overflow: TextOverflow.ellipsis)),
-                          DataCell(Text(wChuaXacNhan[i].nguoiNop)),
-                          DataCell(Text(wChuaXacNhan[i].nguoiThu)),
-                          DataCell(Text(wChuaXacNhan[i].noiDung)),
-                          DataCell(
-                              Text(Helper.formatNum(wChuaXacNhan[i].soTien))),
-                        ]))),
+                (i) {
+                  return DataRow2(
+                      selected: _select.contains(wChuaXacNhan[i].id),
+                      onSelectChanged: (val) {
+                        if (_select.contains(wChuaXacNhan[i].id)) {
+                          _select.remove(wChuaXacNhan[i].id);
+                        } else {
+                          _select.add(wChuaXacNhan[i].id!);
+                        }
+                        setState(() {});
+                      },
+                      cells: [
+                        DataCell(_itemCenter("${i + 1}")),
+                        DataCell(_itemCenter(wChuaXacNhan[i].id.toString()),onTap: (){
+                          // print('object');
+                          _showEdit(wChuaXacNhan[i]);
+
+                        }),
+                        DataCell(_itemCenter(
+                            wChuaXacNhan[i].hopDongID.toString())),
+                        DataCell(Text(Helper.dMy(
+                            wChuaXacNhan[i].ngayThu?.trim()))),
+                        DataCell(Text(Helper.My(wChuaXacNhan[i].thang))),
+                        DataCell(Text(Helper.My(wChuaXacNhan[i].dsThang))),
+                        DataCell(Text(wChuaXacNhan[i].tenMoRong,
+                            softWrap: false,
+                            overflow: TextOverflow.ellipsis)),
+                        DataCell(Text(wChuaXacNhan[i].nguoiNop)),
+                        DataCell(Text(wChuaXacNhan[i].nguoiThu)),
+                        DataCell(Text(wChuaXacNhan[i].noiDung)),
+                        DataCell(
+                            Text(Helper.formatNum(wChuaXacNhan[i].soTien))),
+                      ]);
+                })),
       ),
     );
   }

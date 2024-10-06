@@ -6,7 +6,7 @@ class WtextButton extends StatelessWidget {
       this.onPressed,
       this.enable = true,
       required this.text,
-        this.focusNode,
+        this.focusNode,this.color,
       this.icon});
 
   void Function()? onPressed;
@@ -14,6 +14,7 @@ class WtextButton extends StatelessWidget {
   String text;
   IconData? icon;
   FocusNode? focusNode;
+  Color? color;
   @override
   Widget build(BuildContext context) {
     return TextButton(
@@ -22,7 +23,7 @@ class WtextButton extends StatelessWidget {
       onPressed: enable ? onPressed : null,
       child: Row(
         children: [
-          FittedBox(child: Text(text)),
+          FittedBox(child: Text(text, style: TextStyle(color: color),)),
           Icon(
             icon,
             size: 10,

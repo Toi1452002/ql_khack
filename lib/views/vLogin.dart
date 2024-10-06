@@ -38,12 +38,13 @@ class Vlogin extends ConsumerWidget {
     });
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: primaryColor,
       body: Center(
         child: ClayContainer(
           color: primaryColor,
           // emboss: true,
-          height: 220,
+          height: 240,
           width: 350,
           child: Padding(
             padding: const EdgeInsets.all(20),

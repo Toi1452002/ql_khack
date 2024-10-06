@@ -61,6 +61,9 @@ class Wtextfield extends StatelessWidget {
               onChanged: onChanged,
               textAlign: textAlign,
               onSubmitted: onSubmitted,
+              onTapOutside: (val){
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
               onTap: onTap,
               enabled: enabled,
               style: style ?? const TextStyle(fontSize: 13),

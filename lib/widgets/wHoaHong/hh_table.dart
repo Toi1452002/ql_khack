@@ -1,6 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:ql_khach/providers/providers.dart';
 import 'package:ql_khach/utils/utils.dart';
 import 'package:ql_khach/widgets/widgets.dart';
@@ -13,7 +14,8 @@ final hhIsSortPVD = StateProvider.autoDispose<bool>((ref) =>true);
 class HhTable extends ConsumerWidget {
   const HhTable({super.key});
   void _onRefresh(WidgetRef ref){
-    ref.read(hoaHongProvider.notifier).onGetHoaHong(ref);
+    final user = ref.watch(userProvider);
+    ref.read(hoaHongProvider.notifier).onGetHoaHong(ref,user!);
     ref.refresh(filterHoaHongPVD);
     ref.refresh(hhSortColumnPVD);
     ref.refresh(hhSortColumnPVD);
@@ -28,8 +30,9 @@ class HhTable extends ConsumerWidget {
       final bool user = wFilHoaHong.user == null || e.user == wFilHoaHong.user;
       final bool ngayThu = wFilHoaHong.ngayThu == null || e.ngayThu == wFilHoaHong.ngayThu;
       final bool maHD = wFilHoaHong.maHD == null || e.maHD.toString() == wFilHoaHong.maHD;
+      final bool hoaHong = wFilHoaHong.hoaHong == null || Helper.formatNum(e.hoaHong) == wFilHoaHong.hoaHong;
       final bool hhThang = wFilHoaHong.hoaHongThang == null || Helper.My(e.hoaHongThang) == wFilHoaHong.hoaHongThang;
-      return phieuID && user && ngayThu && maHD && hhThang;
+      return phieuID && user && ngayThu && maHD && hhThang && hoaHong;
     }).toList();
   }
 
@@ -37,10 +40,12 @@ class HhTable extends ConsumerWidget {
     final cbbPhieuID = hh.map((e)=>e.phieuThuID).toSet().toList();
     final cbbMaHD = hh.map((e)=>e.maHD).toSet().toList();
     final cbbUser = hh.map((e)=>e.user).toSet().toList();
-    final cbbNgayThu = hh.map((e)=>e.ngayThu).toSet().toList();
+    final cbbNgayThu = hh.map((e)=>DateFormat('yyyy-MM-dd').format(DateTime.parse(e.ngayThu))).toSet().toList();
     final cbbHHThang = hh.map((e)=>e.hoaHongThang).toSet().toList();
+    final cbbHH = hh.map((e)=>e.hoaHong).toSet().toList();
     final wFilHoaHong = ref.watch(filterHoaHongPVD);
-
+    cbbNgayThu.sort();
+    cbbHH.sort();
     List<DataRow2> row = [];
     row.add(DataRow2(cells: [
       const DataCell(Text("")),
@@ -81,7 +86,13 @@ class HhTable extends ConsumerWidget {
         _onFilter(ref);
       },)),
       const DataCell(SizedBox()),
-      const DataCell(SizedBox()),
+      DataCell(Wdropdown(data: [
+        DropdownItem(value: '', title: ''),
+        ...cbbHH.map((e)=>DropdownItem(value: Helper.formatNum(e), title: Helper.formatNum(e)))
+      ],height: 25,search: true,selected: wFilHoaHong.hoaHong,onChanged: (val){
+        wFilHoaHong.setHoaHong = val.toString().isEmpty ? null : val.toString();
+        _onFilter(ref);
+      },)),
     ]));
 
 
@@ -95,7 +106,8 @@ class HhTable extends ConsumerWidget {
         DataCell(_title(data.user)),
         DataCell(_title(Helper.dMy(data.ngayThu))),
         DataCell(_title(Helper.My(data.hoaHongThang))),
-        DataCell(_title(data.tyleHH == 0 ? '' : data.tyleHH.toStringAsFixed(0))),
+        // DataCell(_title(data.tyleHH == 0 ? '' : data.tyleHH.toStringAsFixed(0))),
+        DataCell(_title(data.noiDung)),
         DataCell(_title(data.hoaHong == 0 ? '' :data.hoaHong.toStringAsFixed(0))),
       ]);
     }));
@@ -107,19 +119,16 @@ class HhTable extends ConsumerWidget {
     final textTheme = context.textTheme;
     final colorMain = context.colorScheme.primary;
     final wListHH = ref.watch(lstHoaHongCopyPVD);
-    final tongTyLe = wListHH.fold(0, (a,b)=>a+b.tyleHH.toInt());
     final tongHoaHong = wListHH.fold(0, (a,b)=>a+b.hoaHong.toInt());
-
     final wColumnSort = ref.watch(hhSortColumnPVD);
     final rColumnSort = ref.read(hhSortColumnPVD.notifier);
     final wIsSort = ref.watch(hhIsSortPVD);
     final rIsSort = ref.read(hhIsSortPVD.notifier);
-
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
-          width: 700,
+          width: 800,
           decoration: BoxDecoration(
             border: Border.all(color: colorMain,width: 1)
           ),
@@ -132,8 +141,8 @@ class HhTable extends ConsumerWidget {
                   children: [
                     SizedBox(height: 25,child: FilledButton(onPressed: ()=>_onRefresh(ref), child: const Icon(Icons.refresh))),
                     const Spacer(),
-                    Wtextfield(width: 80,readOnly: true,textAlign: TextAlign.end,controller: TextEditingController(text: tongTyLe.toString()),),
-                    Wtextfield(width: 80,readOnly: true,textAlign: TextAlign.end,controller: TextEditingController(text: tongHoaHong.toString())),
+                    // Wtextfield(width: 80,readOnly: true,textAlign: TextAlign.end,controller: TextEditingController(text: tongTyLe.toString()),),
+                    Wtextfield(width: 100,readOnly: true,textAlign: TextAlign.end,controller: TextEditingController(text: Helper.formatNum(tongHoaHong.toDouble()))),
                   ],
                 ),
               ),
@@ -178,13 +187,12 @@ class HhTable extends ConsumerWidget {
                   }
                   rIsSort.state = !wIsSort;
                 }),
-                DataColumn2(label: _title('Tỷ lệ HH'),numeric: true,onSort: (i,t){
+                DataColumn2(label: _title('Nội dung'),onSort: (i,t){
                   rColumnSort.state = i;
                   if(wIsSort){
-                    wListHH.sort((a,b)=>b.tyleHH.compareTo(a.tyleHH));
+                    wListHH.sort((a,b)=>b.noiDung.compareTo(a.noiDung));
                   }else{
-                    wListHH.sort((a,b)=>a.tyleHH.compareTo(b.tyleHH));
-
+                    wListHH.sort((a,b)=>a.noiDung.compareTo(b.noiDung));
                   }
                   rIsSort.state = !wIsSort;
                 }),
@@ -225,13 +233,17 @@ class FilterHoaHong extends ChangeNotifier{
   String? user;
   String? ngayThu;
   String? hoaHongThang;
+  String? hoaHong;
 
   set setPhieuThu(String? val){
     phieuThuID = val;
     notifyListeners();
   }
 
-
+  set setHoaHong(String? val){
+    hoaHong = val;
+    notifyListeners();
+  }
   set setMaHD(String? val){
     maHD = val;
     notifyListeners();

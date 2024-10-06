@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ql_khach/config/config.dart';
 import 'package:ql_khach/providers/providers.dart';
 import 'package:ql_khach/utils/utils.dart';
 
@@ -12,10 +13,12 @@ class MenuItem extends ConsumerWidget {
   MenuItem({super.key, required this.icon, required this.routerName});
 
   _onTapItem(BuildContext context, WidgetRef ref) {
-    ref.read(maKhachSelectProvider.notifier).state = null;
-    ref.read(hdMaHD.notifier).state = null;
     context.goNamed(routerName);
     ref.read(menuProvider.notifier).changeSelect(routerName);
+    ref.read(maKhachSelectProvider.notifier).state = null;
+    // ref.read(hdMaHD.notifier).state = null;
+    Navigator.pop(context);
+    // ref.read(menuProvider.notifier).show(false);
   }
 
   @override

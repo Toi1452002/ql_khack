@@ -29,12 +29,14 @@ class HhAddState extends ConsumerState<HhAdd> {
   final txtDenY = TextEditingController();
   final txtPhieuID = TextEditingController();
 
+  final txtTyLe = TextEditingController();
+
   @override
   void initState() {
     List<String> tmp = widget.hoahong.hoaHongThang.split('-');
     String tuM = DateTime.now().month.toString();
-    txtDenM.text = tmp.last;
-    txtDenY.text = tmp.first;
+    txtDenM.text = tuM.length == 1 ? '0$tuM' : tuM;
+    txtDenY.text = DateTime.now().year.toString();
     txtTuM.text = tuM.length == 1 ? '0$tuM' : tuM;
     txtTuY.text = DateTime.now().year.toString();
     txtPhieuID.text = widget.hoahong.phieuThuID.toString();
@@ -42,33 +44,33 @@ class HhAddState extends ConsumerState<HhAdd> {
     super.initState();
   }
 
-  void _onClose(BuildContext context) async {
+  void _onClose(BuildContext context, WidgetRef ref) async {
     Navigator.pop(context);
-    await ref.read(hoaHongProvider.notifier).onGetHoaHong(ref);
   }
 
   void _addHoaHong(WidgetRef ref, BuildContext context) {
     final wSelectUser = ref.watch(selectItemDropdownPVD).lstSelect;
+    final wListHH = ref.watch(lstHoaHongPVD);
     final rErrorInput = ref.read(hhErrorInputPVD.notifier);
     final wUser = ref.watch(userProvider);
+    DateTime tu = DateTime(txtTuY.text.toInt, txtTuM.text.toInt);
+    DateTime den = DateTime(txtDenY.text.toInt, txtDenM.text.toInt);
     rErrorInput.state = '';
 
     if (wSelectUser.isEmpty) {
       rErrorInput.state = 'Chưa chọn user';
       return;
     }
-    try {
-      if (txtTuM.text.toInt > 12 || txtTuM.text.toInt < 0) {
-        rErrorInput.state = 'Thời gian không hợp lệ';
-        return;
-      }
-      if (txtDenM.text.toInt > 12 || txtDenM.text.toInt < 0) {
-        rErrorInput.state = 'Thời gian không hợp lệ';
-        return;
-      }
-      DateTime tu = DateTime(txtTuY.text.toInt, txtTuM.text.toInt);
-      DateTime den = DateTime(txtDenY.text.toInt, txtDenM.text.toInt);
+    if (txtTuM.text.toInt > 12 || txtTuM.text.toInt < 0) {
+      rErrorInput.state = 'Thời gian không hợp lệ';
+      return;
+    }
+    if (txtDenM.text.toInt > 12 || txtDenM.text.toInt < 0) {
+      rErrorInput.state = 'Thời gian không hợp lệ';
+      return;
+    }
 
+    try {
       final thang = den.difference(tu).inDays ~/ 30;
       if (thang < 0) {
         rErrorInput.state = 'Thời gian không hợp lệ';
@@ -85,6 +87,18 @@ class HhAddState extends ConsumerState<HhAdd> {
 
         for (String x in wSelectUser) {
           String id = x.split('-').first;
+          String fullName = x.split('-').last;
+          if (wListHH
+              .where((e) =>
+                  e.hoaHongThang == date &&
+                  e.user == fullName &&
+                  e.phieuThuID == widget.hoahong.phieuThuID)
+              .toList()
+              .isNotEmpty) {
+            SmartAlert().showInfo(
+                "Hoa hồng tháng ${Helper.My(date)} của $fullName đã tồn tại");
+            return;
+          }
           data.add({
             'PhieuThuID': widget.hoahong.phieuThuID,
             'UserID': id,
@@ -99,12 +113,12 @@ class HhAddState extends ConsumerState<HhAdd> {
           tuNam += 1;
         }
       }
-
+      final user = ref.watch(userProvider);
       ref
           .read(hoaHongProvider.notifier)
           .onAddHoaHong(data)
-          .whenComplete(() async {
-            await ref.read(hoaHongProvider.notifier).onGetHoaHong(ref);
+          .whenComplete(() {
+        ref.read(hoaHongProvider.notifier).onGetHoaHong(ref, user!);
       });
     } catch (e) {
       rErrorInput.state = 'Thời gian không hợp lệ';
@@ -117,14 +131,14 @@ class HhAddState extends ConsumerState<HhAdd> {
     final textTheme = context.textTheme;
     final wLstUser = ref.watch(lstUserProvider);
     final wErrorInput = ref.watch(hhErrorInputPVD);
-    final userTrueLV = ref.watch(userProvider)!.level > 1 ;
+    final userTrueLV = ref.watch(userProvider)!.level > 1;
     final wListHH = ref
         .watch(lstHoaHongPVD)
         .where((e) => e.phieuThuID == widget.hoahong.phieuThuID)
         .toList();
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: context.colorScheme.primary,
@@ -138,7 +152,7 @@ class HhAddState extends ConsumerState<HhAdd> {
         ),
         actions: [
           InkWell(
-              onTap: () => _onClose(context),
+              onTap: () => _onClose(context, ref),
               child: const Icon(
                 Icons.close,
                 color: Colors.white,
@@ -146,415 +160,445 @@ class HhAddState extends ConsumerState<HhAdd> {
           const Gap(5),
         ],
       ),
-      body: LayoutBuilder(builder: (context, size){
-        if(size.maxWidth < 580){
-          return Column(
-            children: [
-              Expanded(
-                flex: 2,
-                child: Container(
-                  width: size.maxWidth,
-                  height: 300,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
-                    border: Border(
-                      bottom: BorderSide(color: context.colorScheme.primary),
+      body: LayoutBuilder(
+        builder: (context, size) {
+          if (size.maxWidth < 580) {
+            // phone
+            return Column(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    width: size.maxWidth,
+                    height: 300,
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      border: Border(
+                        bottom: BorderSide(color: context.colorScheme.primary),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Wtextfield(
+                              // label: 'Phiếu thu ID',
+                              controller: txtPhieuID,
+                              width: 100,
+                              readOnly: true,
+                            ),
+                            const Gap(15),
+                            WdropdownSelect(
+                              width: size.maxWidth < 350 ? 150 : null,
+                              hintText: 'Chọn user',
+                              items: wLstUser
+                                  .map((e) => "${e.id}-${e.fullname}")
+                                  .toList(),
+                            ),
+                          ],
+                        ),
+                        const Gap(10),
+                        Row(
+                          children: [
+                            const Text('Từ: '),
+                            const Gap(10),
+                            // const Spacer(),
+                            Wtextfield(
+                              width: 50,
+                              hintText: 'MM',
+                              controller: txtTuM,
+                            ),
+                            Wtextfield(
+                              width: 50,
+                              hintText: 'yyyy',
+                              controller: txtTuY,
+                            ),
+                            const Spacer(),
+                            Text(
+                              wErrorInput,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ],
+                        ),
+                        const Gap(10),
+                        Row(
+                          children: [
+                            const Text('Đến: '),
+                            Wtextfield(
+                              width: 50,
+                              hintText: 'MM',
+                              controller: txtDenM,
+                            ),
+                            Wtextfield(
+                              width: 50,
+                              hintText: 'yyyy',
+                              controller: txtDenY,
+                            ),
+                            const Spacer(),
+                            FilledButton(
+                              onPressed: userTrueLV
+                                  ? () => _addHoaHong(ref, context)
+                                  : null,
+                              child: const Text('Thêm hàng'),
+                            )
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  child: Column(
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Wtextfield(
-                            // label: 'Phiếu thu ID',
-                            controller: txtPhieuID,
-                            width: 100,
-                            readOnly: true,
-                          ),
-                          const Gap(15),
-                          WdropdownSelect(
-                            width: size.maxWidth<350 ? 150 : null,
-                            hintText: 'Chọn user',
-                            items:
-                            wLstUser.map((e) => "${e.id}-${e.username}").toList(),
-                          ),
+                ),
+                Expanded(
+                  flex: 4,
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    child: DataTable2(
+                      minWidth: 600,
+                      border: TableBorder.all(color: Colors.black, width: .2),
+                      headingTextStyle: textTheme.titleSmall!
+                          .copyWith(fontSize: 12, color: Colors.blue.shade900),
+                      dataTextStyle:
+                          textTheme.bodySmall!.copyWith(fontSize: 12),
+                      headingRowHeight: 25,
+                      dataRowHeight: 25,
+                      columnSpacing: 0,
+                      horizontalMargin: 5,
+                      // headingRowColor: WidgetStatePropertyAll(Colors.black.withOpacity(.3)),
+                      columns: [
+                        // DataColumn2(label: Text(''), fixedWidth: 20),
+                        const DataColumn2(label: Text('ID'), fixedWidth: 30),
+                        DataColumn2(label: _title('MaHD'), fixedWidth: 50),
+                        // DataColumn2(label: Text('MaPhieu'), fixedWidth: 70),
 
-                          // const Gap(15),
-                          // Row(
-                          //   children: [
-                          //     const Text('Đến: '),
-                          //     const Spacer(),
-                          //     Wtextfield(
-                          //       width: 50,
-                          //       hintText: 'MM',
-                          //       controller: txtDenM,
-                          //     ),
-                          //     Wtextfield(
-                          //       width: 50,
-                          //       hintText: 'yyyy',
-                          //       controller: txtDenY,
-                          //     ),
-                          //   ],
-                          // ),
-                          // const Spacer(),
-                          // Text(
-                          //   wErrorInput,
-                          //   style: const TextStyle(color: Colors.red),
-                          // ),
-                          // SizedBox(
-                          //   width: double.infinity,
-                          //   child: FilledButton(
-                          //     onPressed:  userTrueLV ? () =>_addHoaHong(ref, context) : null,
-                          //     child: const Text('Chấp nhận'),
-                          //   ),
-                          // )
-                        ],
+                        DataColumn2(label: _title('User'), fixedWidth: 80),
+                        DataColumn2(label: _title('NgayThu'), fixedWidth: 80),
+                        DataColumn2(label: _title('HHThang')),
+                        DataColumn2(label: _title('Nội dung'), fixedWidth: 100),
+                        // DataColumn2(
+                        //     label: _title('TyleHH'),
+                        //     fixedWidth: 80,
+                        //     numeric: true),
+                        DataColumn2(
+                            label: _title('HoaHong'),
+                            fixedWidth: 80,
+                            numeric: true),
+                        const DataColumn2(label: Text(''), fixedWidth: 30),
+                      ],
+                      rows: wListHH.map(
+                        (e) {
+                          return DataRow2(cells: [
+                            DataCell(Align(
+                                alignment: Alignment.center,
+                                child: Text(e.id.toString()))),
+                            DataCell(Align(
+                                alignment: Alignment.center,
+                                child: Text(e.maHD.toString()))),
+                            // DataCell(Text(e.phieuThuID.toString())),
+
+                            DataCell(_title(e.user)),
+                            DataCell(_title(Helper.dMy(e.ngayThu))),
+                            DataCell(_title(Helper.My(e.hoaHongThang))),
+                            DataCell(Wtextfield(
+                              width: 100,
+                              height: 24,
+                              readOnly: !userTrueLV,
+                              textAlign: TextAlign.start,
+                              noneBorder: true,
+                              onChanged: (val) {
+                                EasyDebounce.debounce('updateND',
+                                    const Duration(milliseconds: 500), () {
+                                  ref
+                                      .read(hoaHongProvider.notifier)
+                                      .onUpdateNoiDung(val, e.id!);
+                                });
+                              },
+                              controller:
+                                  TextEditingController(text: e.noiDung),
+                            )),
+                            // DataCell(Wtextfield(
+                            //   width: 80,
+                            //   height: 24,
+                            //   readOnly: !userTrueLV,
+                            //   textAlign: TextAlign.end,
+                            //   noneBorder: true,
+                            //   onChanged: (val) {
+                            //     EasyDebounce.debounce('updateTL',
+                            //         const Duration(milliseconds: 500), () {
+                            //       ref
+                            //           .read(hoaHongProvider.notifier)
+                            //           .onUpdateTyLe(val.toDouble, e.id!);
+                            //     });
+                            //   },
+                            //   controller: TextEditingController(
+                            //       text: e.tyleHH.toStringAsFixed(0)),
+                            // )),
+                            DataCell(Wtextfield(
+                              width: 80,
+                              height: 24,
+                              readOnly: !userTrueLV,
+                              textAlign: TextAlign.end,
+                              noneBorder: true,
+                              onChanged: (val) {
+                                EasyDebounce.debounce('updateTL',
+                                    const Duration(milliseconds: 500), () {
+                                  ref
+                                      .read(hoaHongProvider.notifier)
+                                      .onUpdateHoaHong(val.toDouble, e.id!);
+                                });
+                              },
+                              controller: TextEditingController(
+                                  text: e.hoaHong.toStringAsFixed(0)),
+                            )),
+                            DataCell(
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.delete,
+                                    size: 20,
+                                    color: Colors.red.shade400,
+                                  ),
+                                ),
+                                onTap: !userTrueLV
+                                    ? null
+                                    : () {
+                                        SmartAlert().showInfo('Tiếp tục xóa?',
+                                            onConfirm: () async {
+                                          final user = ref.watch(userProvider);
+                                          ref
+                                              .read(hoaHongProvider.notifier)
+                                              .onDeleteHoaHong(
+                                                  e.id!, ref, user!);
+                                          // await ref.read(hoaHongProvider.notifier).onGetHoaHong(ref);
+                                        });
+                                      }),
+                          ]);
+                        },
+                      ).toList(),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      border: Border(
+                        right: BorderSide(color: context.colorScheme.primary),
                       ),
-                      Gap(10),
-                      Row(
-                        children: [
-                          const Text('Từ: '),
-                          Gap(10),
-                          // const Spacer(),
-                          Wtextfield(
-                            width: 50,
-                            hintText: 'MM',
-                            controller: txtTuM,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Wtextfield(
+                          label: 'Phiếu thu ID',
+                          controller: txtPhieuID,
+                          width: 200,
+                          readOnly: true,
+                        ),
+                        const Gap(15),
+                        WdropdownSelect(
+                          hintText: 'Chọn user',
+                          items: wLstUser
+                              .map((e) => "${e.id}-${e.fullname}")
+                              .toList(),
+                        ),
+                        const Gap(15),
+                        Row(
+                          children: [
+                            const Text('Từ: '),
+                            const Spacer(),
+                            Wtextfield(
+                              width: 50,
+                              hintText: 'MM',
+                              controller: txtTuM,
+                            ),
+                            Wtextfield(
+                              width: 50,
+                              hintText: 'yyyy',
+                              controller: txtTuY,
+                            ),
+                          ],
+                        ),
+                        const Gap(15),
+                        Row(
+                          children: [
+                            const Text('Đến: '),
+                            const Spacer(),
+                            Wtextfield(
+                              width: 50,
+                              hintText: 'MM',
+                              controller: txtDenM,
+                            ),
+                            Wtextfield(
+                              width: 50,
+                              hintText: 'yyyy',
+                              controller: txtDenY,
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Text(
+                          wErrorInput,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed: userTrueLV
+                                ? () => _addHoaHong(ref, context)
+                                : null,
+                            child: const Text('Thêm hàng'),
                           ),
-                          Wtextfield(
-                            width: 50,
-                            hintText: 'yyyy',
-                            controller: txtTuY,
-                          ),
-                          Spacer(),
-                          Text(
-                            wErrorInput,
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                        ],
-                      ),
-                      Gap(10),
-                      Row(
-                        children: [
-                          const Text('Đến: '),
-                          Wtextfield(
-                            width: 50,
-                            hintText: 'MM',
-                            controller: txtDenM,
-                          ),
-                          Wtextfield(
-                            width: 50,
-                            hintText: 'yyyy',
-                            controller: txtDenY,
-                          ),
-                          Spacer(),
-                          FilledButton(
-                            onPressed:  userTrueLV ? () =>_addHoaHong(ref, context) : null,
-                            child: const Text('Chấp nhận'),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    child: DataTable2(
+                      minWidth: 600,
+                      border: TableBorder.all(color: Colors.black, width: .2),
+                      headingTextStyle: textTheme.titleSmall!
+                          .copyWith(fontSize: 12, color: Colors.blue.shade900),
+                      dataTextStyle:
+                          textTheme.bodySmall!.copyWith(fontSize: 12),
+                      headingRowHeight: 25,
+                      dataRowHeight: 25,
+                      columnSpacing: 0,
+                      horizontalMargin: 5,
+                      // headingRowColor: WidgetStatePropertyAll(Colors.black.withOpacity(.3)),
+                      columns: [
+                        // DataColumn2(label: Text(''), fixedWidth: 20),
+                        const DataColumn2(label: Text('ID'), fixedWidth: 30),
+                        DataColumn2(label: _title('MaHD'), fixedWidth: 50),
+                        // DataColumn2(label: Text('MaPhieu'), fixedWidth: 70),
+
+                        DataColumn2(label: _title('User'), fixedWidth: 80),
+                        DataColumn2(label: _title('NgayThu'), fixedWidth: 80),
+                        DataColumn2(label: _title('HHThang')),
+                        DataColumn2(label: _title('Nội dung'), fixedWidth: 100),
+                        // DataColumn2(
+                        //     label: _title('TyleHH'),
+                        //     fixedWidth: 80,
+                        //     numeric: true),
+                        DataColumn2(
+                            label: _title('HoaHong'),
+                            fixedWidth: 80,
+                            numeric: true),
+                        const DataColumn2(label: Text(''), fixedWidth: 30),
+                      ],
+                      rows: wListHH
+                          .map(
+                            (e) => DataRow2(cells: [
+                              // DataCell(Text('')),
+                              DataCell(Align(
+                                  alignment: Alignment.center,
+                                  child: Text(e.id.toString()))),
+                              DataCell(Align(
+                                  alignment: Alignment.center,
+                                  child: Text(e.maHD.toString()))),
+                              // DataCell(Text(e.phieuThuID.toString())),
+
+                              DataCell(_title(e.user)),
+                              DataCell(_title(Helper.dMy(e.ngayThu))),
+                              DataCell(_title(Helper.My(e.hoaHongThang))),
+                              DataCell(Wtextfield(
+                                width: 100,
+                                height: 24,
+                                readOnly: !userTrueLV,
+                                textAlign: TextAlign.start,
+                                noneBorder: true,
+                                onChanged: (val) {
+                                  EasyDebounce.debounce('updateND',
+                                      const Duration(milliseconds: 500), () {
+                                    ref
+                                        .read(hoaHongProvider.notifier)
+                                        .onUpdateNoiDung(val, e.id!);
+                                  });
+                                },
+                                controller:
+                                    TextEditingController(text: e.noiDung),
+                              )),
+                              // DataCell(Wtextfield(
+                              //   width: 80,
+                              //   height: 24,
+                              //   readOnly: !userTrueLV,
+                              //   textAlign: TextAlign.end,
+                              //   noneBorder: true,
+                              //   onChanged: (val) {
+                              //     EasyDebounce.debounce('updateTL',
+                              //         const Duration(milliseconds: 500), () {
+                              //       ref
+                              //           .read(hoaHongProvider.notifier)
+                              //           .onUpdateTyLe(val.toDouble, e.id!);
+                              //     });
+                              //   },
+                              //   controller: TextEditingController(
+                              //       text: e.tyleHH.toStringAsFixed(0)),
+                              // )),
+                              DataCell(Wtextfield(
+                                width: 80,
+                                height: 24,
+                                readOnly: !userTrueLV,
+                                textAlign: TextAlign.end,
+                                noneBorder: true,
+                                onChanged: (val) {
+                                  EasyDebounce.debounce('updateTL',
+                                      const Duration(milliseconds: 500), () {
+                                    ref
+                                        .read(hoaHongProvider.notifier)
+                                        .onUpdateHoaHong(val.toDouble, e.id!);
+                                  });
+                                },
+                                controller: TextEditingController(
+                                    text: e.hoaHong.toStringAsFixed(0)),
+                              )),
+                              DataCell(
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Icon(
+                                      Icons.delete,
+                                      size: 20,
+                                      color: Colors.red.shade400,
+                                    ),
+                                  ),
+                                  onTap: !userTrueLV
+                                      ? null
+                                      : () {
+                                          SmartAlert().showInfo('Tiếp tục xóa?',
+                                              onConfirm: () async {
+                                            final user =
+                                                ref.watch(userProvider);
+                                            ref
+                                                .read(hoaHongProvider.notifier)
+                                                .onDeleteHoaHong(
+                                                    e.id!, ref, user!);
+                                            // await ref.read(hoaHongProvider.notifier).onGetHoaHong(ref);
+                                          });
+                                        }),
+                            ]),
                           )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 4,
-                child: Container(
-                  alignment: Alignment.centerLeft,
-                  child: DataTable2(
-                    minWidth: 500,
-                    border: TableBorder.all(color: Colors.black, width: .2),
-                    headingTextStyle: textTheme.titleSmall!
-                        .copyWith(fontSize: 12, color: Colors.blue.shade900),
-                    dataTextStyle: textTheme.bodySmall!.copyWith(fontSize: 12),
-                    headingRowHeight: 25,
-                    dataRowHeight: 25,
-                    columnSpacing: 0,
-                    horizontalMargin: 5,
-                    // headingRowColor: WidgetStatePropertyAll(Colors.black.withOpacity(.3)),
-                    columns: [
-                      // DataColumn2(label: Text(''), fixedWidth: 20),
-                      const DataColumn2(label: Text('ID'), fixedWidth: 30),
-                      DataColumn2(label: _title('MaHD'), fixedWidth: 50),
-                      // DataColumn2(label: Text('MaPhieu'), fixedWidth: 70),
-
-                      DataColumn2(label: _title('User'), fixedWidth: 80),
-                      DataColumn2(label: _title('NgayThu'), fixedWidth: 80),
-                      DataColumn2(label: _title('HHThang')),
-                      DataColumn2(
-                          label: _title('TyleHH'), fixedWidth: 80, numeric: true),
-                      DataColumn2(
-                          label: _title('HoaHong'), fixedWidth: 80, numeric: true),
-                      const DataColumn2(label: Text(''), fixedWidth: 30),
-                    ],
-                    rows: wListHH
-                        .map(
-                          (e) => DataRow2(cells: [
-                        // DataCell(Text('')),
-                        DataCell(Align(
-                            alignment: Alignment.center,
-                            child: Text(e.id.toString()))),
-                        DataCell(Align(
-                            alignment: Alignment.center,
-                            child: Text(e.maHD.toString()))),
-                        // DataCell(Text(e.phieuThuID.toString())),
-
-                        DataCell(_title(e.user)),
-                        DataCell(_title(Helper.dMy(e.ngayThu))),
-                        DataCell(_title(Helper.My(e.hoaHongThang))),
-                        DataCell(Wtextfield(
-                          width: 80,
-                          height: 24,
-                          readOnly: !userTrueLV,
-                          textAlign: TextAlign.end,
-                          noneBorder: true,
-                          onChanged: (val) {
-                            EasyDebounce.debounce(
-                                'updateTL', const Duration(milliseconds: 500),
-                                    () {
-                                  ref
-                                      .read(hoaHongProvider.notifier)
-                                      .onUpdateTyLe(val.toDouble, e.id!);
-                                });
-                          },
-                          controller: TextEditingController(
-                              text: e.tyleHH.toStringAsFixed(0)),
-                        )),
-                        DataCell(Wtextfield(
-                          width: 80,
-                          height: 24,
-                          readOnly: !userTrueLV,
-                          textAlign: TextAlign.end,
-                          noneBorder: true,
-                          onChanged: (val) {
-                            EasyDebounce.debounce(
-                                'updateTL', const Duration(milliseconds: 500),
-                                    () {
-                                  ref
-                                      .read(hoaHongProvider.notifier)
-                                      .onUpdateHoaHong(val.toDouble, e.id!);
-                                });
-                          },
-                          controller: TextEditingController(
-                              text: e.hoaHong.toStringAsFixed(0)),
-                        )),
-                        DataCell(
-                            Align(
-                              alignment: Alignment.center,
-                              child: Icon(
-                                Icons.delete,
-                                size: 20,
-                                color: Colors.red.shade400,
-                              ),
-                            ),
-                            onTap:!userTrueLV ? null : (){
-                              SmartAlert().showInfo('Tiếp tục xóa?',onConfirm: () async{
-                                ref.read(hoaHongProvider.notifier).onDeleteHoaHong(e.id!, ref);
-                                // await ref.read(hoaHongProvider.notifier).onGetHoaHong(ref);
-                              });
-                            }
-                        ),
-                      ]),
-                    )
-                        .toList(),
-                  ),
-                ),
-              ),
-            ],
-          );
-        }else{
-          return Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
-                    border: Border(
-                      right: BorderSide(color: context.colorScheme.primary),
+                          .toList(),
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Wtextfield(
-                        label: 'Phiếu thu ID',
-                        controller: txtPhieuID,
-                        width: 200,
-                        readOnly: true,
-                      ),
-                      const Gap(15),
-                      WdropdownSelect(
-                        hintText: 'Chọn user',
-                        items:
-                        wLstUser.map((e) => "${e.id}-${e.username}").toList(),
-                      ),
-                      const Gap(15),
-                      Row(
-                        children: [
-                          const Text('Từ: '),
-                          const Spacer(),
-                          Wtextfield(
-                            width: 50,
-                            hintText: 'MM',
-                            controller: txtTuM,
-                          ),
-                          Wtextfield(
-                            width: 50,
-                            hintText: 'yyyy',
-                            controller: txtTuY,
-                          ),
-                        ],
-                      ),
-                      const Gap(15),
-                      Row(
-                        children: [
-                          const Text('Đến: '),
-                          const Spacer(),
-                          Wtextfield(
-                            width: 50,
-                            hintText: 'MM',
-                            controller: txtDenM,
-                          ),
-                          Wtextfield(
-                            width: 50,
-                            hintText: 'yyyy',
-                            controller: txtDenY,
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      Text(
-                        wErrorInput,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: FilledButton(
-                          onPressed:  userTrueLV ? () =>_addHoaHong(ref, context) : null,
-                          child: const Text('Chấp nhận'),
-                        ),
-                      )
-                    ],
-                  ),
                 ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Container(
-                  alignment: Alignment.centerLeft,
-                  child: DataTable2(
-                    minWidth: 500,
-                    border: TableBorder.all(color: Colors.black, width: .2),
-                    headingTextStyle: textTheme.titleSmall!
-                        .copyWith(fontSize: 12, color: Colors.blue.shade900),
-                    dataTextStyle: textTheme.bodySmall!.copyWith(fontSize: 12),
-                    headingRowHeight: 25,
-                    dataRowHeight: 25,
-                    columnSpacing: 0,
-                    horizontalMargin: 5,
-                    // headingRowColor: WidgetStatePropertyAll(Colors.black.withOpacity(.3)),
-                    columns: [
-                      // DataColumn2(label: Text(''), fixedWidth: 20),
-                      const DataColumn2(label: Text('ID'), fixedWidth: 30),
-                      DataColumn2(label: _title('MaHD'), fixedWidth: 50),
-                      // DataColumn2(label: Text('MaPhieu'), fixedWidth: 70),
-
-                      DataColumn2(label: _title('User'), fixedWidth: 80),
-                      DataColumn2(label: _title('NgayThu'), fixedWidth: 80),
-                      DataColumn2(label: _title('HHThang')),
-                      DataColumn2(
-                          label: _title('TyleHH'), fixedWidth: 80, numeric: true),
-                      DataColumn2(
-                          label: _title('HoaHong'), fixedWidth: 80, numeric: true),
-                      const DataColumn2(label: Text(''), fixedWidth: 30),
-                    ],
-                    rows: wListHH
-                        .map(
-                          (e) => DataRow2(cells: [
-                        // DataCell(Text('')),
-                        DataCell(Align(
-                            alignment: Alignment.center,
-                            child: Text(e.id.toString()))),
-                        DataCell(Align(
-                            alignment: Alignment.center,
-                            child: Text(e.maHD.toString()))),
-                        // DataCell(Text(e.phieuThuID.toString())),
-
-                        DataCell(_title(e.user)),
-                        DataCell(_title(Helper.dMy(e.ngayThu))),
-                        DataCell(_title(Helper.My(e.hoaHongThang))),
-                        DataCell(Wtextfield(
-                          width: 80,
-                          height: 24,
-                          readOnly: !userTrueLV,
-                          textAlign: TextAlign.end,
-                          noneBorder: true,
-                          onChanged: (val) {
-                            EasyDebounce.debounce(
-                                'updateTL', const Duration(milliseconds: 500),
-                                    () {
-                                  ref
-                                      .read(hoaHongProvider.notifier)
-                                      .onUpdateTyLe(val.toDouble, e.id!);
-                                });
-                          },
-                          controller: TextEditingController(
-                              text: e.tyleHH.toStringAsFixed(0)),
-                        )),
-                        DataCell(Wtextfield(
-                          width: 80,
-                          height: 24,
-                          readOnly: !userTrueLV,
-                          textAlign: TextAlign.end,
-                          noneBorder: true,
-                          onChanged: (val) {
-                            EasyDebounce.debounce(
-                                'updateTL', const Duration(milliseconds: 500),
-                                    () {
-                                  ref
-                                      .read(hoaHongProvider.notifier)
-                                      .onUpdateHoaHong(val.toDouble, e.id!);
-                                });
-                          },
-                          controller: TextEditingController(
-                              text: e.hoaHong.toStringAsFixed(0)),
-                        )),
-                        DataCell(
-                            Align(
-                              alignment: Alignment.center,
-                              child: Icon(
-                                Icons.delete,
-                                size: 20,
-                                color: Colors.red.shade400,
-                              ),
-                            ),
-                            onTap:!userTrueLV ? null : (){
-                              SmartAlert().showInfo('Tiếp tục xóa?',onConfirm: () async{
-                                ref.read(hoaHongProvider.notifier).onDeleteHoaHong(e.id!, ref);
-                                // await ref.read(hoaHongProvider.notifier).onGetHoaHong(ref);
-                              });
-                            }
-                        ),
-                      ]),
-                    )
-                        .toList(),
-                  ),
-                ),
-              ),
-            ],
-          );
-        }
-      },),
+              ],
+            );
+          }
+        },
+      ),
     );
   }
-
-
-
 
   Widget _title(String text) {
     return Padding(

@@ -25,13 +25,17 @@ class Hopdong {
   int daKichHoat;
   bool hieuLuc;
   String dateCreated;
+  String seri;
+  int khachOffline;
   Hopdong({
     this.maHD,
     this.id,
+    this.khachOffline = 0,
     this.khachID = 0,
     this.moTa = '',
     this.nguonKhach = '',
     this.doanhNghiep = false,
+    this.seri = '',
     this.ngayTruyCap,
     this.soNgayConLai,
     this.userNameCreated = '',
@@ -66,6 +70,8 @@ class Hopdong {
       'Phi':phi,
       'ThucThu':thucThu,
       'NgayHetHan':ngayHetHan,
+      'KhachOffline': khachOffline,
+      'Seri': seri,
       'UserNameCreated': userNameCreated,
       'UserNameModified': userNameModified,
       'DateModified': dateModified,
@@ -96,7 +102,8 @@ class Hopdong {
       daKichHoat: map['DaKichHoat'].toString().toInt,
       hieuLuc:map['HieuLuc']==null ? false : map['HieuLuc'].toString().toBool,
       dateCreated: map['DateCreated']??'',
-      dateModified: map['DateModified']??''
+      dateModified: map['DateModified']??'',
+      seri: map['Seri']??''
     );
   }
 }

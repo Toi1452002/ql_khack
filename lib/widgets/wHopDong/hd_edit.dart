@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:ql_khach/data/data.dart';
 import 'package:ql_khach/providers/providers.dart';
 import 'package:ql_khach/utils/utils.dart';
 import 'package:ql_khach/widgets/widgets.dart';
+import 'package:vph_web_date_picker/vph_web_date_picker.dart';
 
-class HdEdit extends ConsumerWidget {
+class HdEdit extends ConsumerStatefulWidget {
   Hopdong? hopdong;
-
   HdEdit({super.key, this.hopdong});
 
+  @override
+  HdEditState createState() => HdEditState();
+}
+
+class HdEditState extends ConsumerState<HdEdit> {
+  final textFieldKey = GlobalKey();
   final txtNgayHetHan = TextEditingController();
   final txtPhi = TextEditingController(text: '0');
   final txtThucThu = TextEditingController(text: '0');
@@ -23,6 +30,7 @@ class HdEdit extends ConsumerWidget {
     final khach = ref.watch(hdSelectKhachPVD);
     final dn = ref.watch(hdDoanhNghiepPVD);
     final hieuLuc = ref.watch(hdHieuLucpPVD);
+    final khachOffline = ref.watch(hdKhachOffline);
     final user = ref.watch(userProvider);
     if (khach == null) {
       ref.read(hdErrorEditPVD.notifier).state = 'Chưa chọn khách';
@@ -33,7 +41,7 @@ class HdEdit extends ConsumerWidget {
       return;
     }
     Hopdong hopDong = Hopdong(
-        id: hopdong?.id,
+        id: widget.hopdong?.id,
         khachID: khach.maKH,
         moTa: txtMoTa.text.trim(),
         nguonKhach: txtNguonKhach.text.trim(),
@@ -41,6 +49,7 @@ class HdEdit extends ConsumerWidget {
         userNameCreated: user!.username,
         userNameModified: user.username,
         dateModified: Helper.nowYmdT,
+        khachOffline: khachOffline ? 1 : 0,
         hieuLuc: hieuLuc,
         maSP: product.productSelect == null ? '' : product.productSelect!,
         maSPCT: product.productDetailSelect == null
@@ -49,13 +58,14 @@ class HdEdit extends ConsumerWidget {
         thoiHan: thoiHan.toInt,
         phi: txtPhi.text.toDouble,
         thucThu: txtThucThu.text.toDouble);
-    if (hopdong == null) {
+    if (widget.hopdong == null) {
       //Insert
       int id = await ref.read(hopdongProvider.notifier).onInsert(hopDong);
       if (id != 0) {
         _onClose(context, ref);
       }
     } else {
+      hopDong.ngayHetHan = Helper.dMYtoYMD(txtNgayHetHan.text);
       //Update
       ref.read(hopdongProvider.notifier).onUpdate(hopDong);
       _onClose(context, ref);
@@ -71,7 +81,18 @@ class HdEdit extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void initState() {
+    if(widget.hopdong!=null){
+      txtNguonKhach.text = widget.hopdong!.nguonKhach;
+      txtMoTa.text = widget.hopdong!.moTa;
+      txtPhi.text = widget.hopdong!.phi.toStringAsFixed(0);
+      txtThucThu.text = widget.hopdong!.thucThu.toStringAsFixed(0);
+      txtNgayHetHan.text = Helper.dMy(widget.hopdong!.ngayHetHan);
+    }
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
     final textTheme = context.textTheme;
     final lstKhach = ref.watch(lstKhachProvider);
     final selectKhach = ref.watch(hdSelectKhachPVD);
@@ -84,20 +105,16 @@ class HdEdit extends ConsumerWidget {
     final wErrorEdit = ref.watch(hdErrorEditPVD);
     final wHieuLuc = ref.watch(hdHieuLucpPVD);
     final rHieuLuc = ref.read(hdHieuLucpPVD.notifier);
+    final wKhachOff = ref.watch(hdKhachOffline);
+    final rKhachOff = ref.read(hdKhachOffline.notifier);
     final sizeSmall = context.deviceSize.width < 500;
-    if (hopdong != null) {
-      txtNguonKhach.text = hopdong!.nguonKhach;
-      txtMoTa.text = hopdong!.moTa;
-      txtPhi.text = hopdong!.phi.toStringAsFixed(0);
-      txtThucThu.text = hopdong!.thucThu.toStringAsFixed(0);
-    }
     return Scaffold(
       backgroundColor: context.colorScheme.primary.withOpacity(.1),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: context.colorScheme.primary,
         title: Text(
-          'Thông tin hợp đồng ${hopdong == null ? '' : '(${hopdong!.id})'}',
+          'Thông tin hợp đồng ${widget.hopdong == null ? '' : '(${widget.hopdong!.id})'}',
           style: textTheme.titleSmall!.copyWith(color: Colors.white),
         ),
         elevation: 0,
@@ -128,13 +145,20 @@ class HdEdit extends ConsumerWidget {
                       : '${selectKhach.maKH} - ${selectKhach.tenGoi}',
                   search: true,
                   data: lstKhach
-                      .map((e) => DropdownItem(
+                      .map((e) =>
+                      DropdownItem(
                           value: "${e.maKH} - ${e.tenGoi}",
                           title: "${e.maKH} - ${e.tenGoi}"))
                       .toList(),
                   onChanged: (val) {
-                    int maKh = val.toString().split(' -').first.toInt;
-                    ref.read(hdSelectKhachPVD.notifier).state =
+                    int maKh = val
+                        .toString()
+                        .split(' -')
+                        .first
+                        .toInt;
+                    ref
+                        .read(hdSelectKhachPVD.notifier)
+                        .state =
                         lstKhach.firstWhere((e) => e.maKH == maKh);
                   },
                   width: sizeSmall ? 100 : 200,
@@ -169,7 +193,8 @@ class HdEdit extends ConsumerWidget {
                       rProduct.changeProduct(val.toString());
                     },
                     data: wProduct.lstProduct
-                        .map((e) => DropdownItem(
+                        .map((e) =>
+                        DropdownItem(
                             value: e.maSP, title: "${e.maSP} ${e.moTa}"))
                         .toList()),
                 Wdropdown(
@@ -227,6 +252,46 @@ class HdEdit extends ConsumerWidget {
               ],
             ),
             const Gap(10),
+            if (widget.hopdong == null)
+              Wtextfield(
+                label: 'Seri',
+                width: 200,
+                readOnly: widget.hopdong != null ? true : false,
+              ),
+            if (widget.hopdong != null)
+              Wtextfield(
+                label: 'Ngày hết hạn',
+                controller: txtNgayHetHan,
+                width: 200,
+                tKey: textFieldKey,
+                readOnly: true,
+                suffixIcon: IconButton(
+                    onPressed: () async {
+                      DateTime? pickedDate = await showWebDatePicker(
+                        context: textFieldKey.currentContext!,
+                        initialDate:
+                        Helper.dMytoDate(txtNgayHetHan.text),
+                        firstDate: DateTime.now()
+                            .subtract(const Duration(days: 7)),
+                        lastDate: DateTime.now()
+                            .add(const Duration(days: 14000)),
+                        width: 250,
+                        // withoutActionButtons: true,
+                        //weekendDaysColor: Colors.red,
+                        //firstDayOfWeekIndex: 1,
+                      );
+                      if (pickedDate != null) {
+                        txtNgayHetHan.text =
+                            DateFormat("dd/MM/yyyy").format(pickedDate);
+                      }
+                    },
+                    icon: const Icon(
+                      Icons.date_range,
+                      size: 15,
+                    )),
+
+              ),
+            const Gap(10),
             Row(
               children: [
                 Checkbox(
@@ -237,7 +302,18 @@ class HdEdit extends ConsumerWidget {
                 const Text('Doanh nghiệp'),
               ],
             ),
-            if (hopdong != null)
+            if (widget.hopdong == null)
+              Row(
+                children: [
+                  Checkbox(
+                      value: wKhachOff,
+                      onChanged: (val) {
+                        rKhachOff.state = val!;
+                      }),
+                  const Text('Khách offline')
+                ],
+              ),
+            if (widget.hopdong != null)
               Row(
                 children: [
                   Checkbox(
@@ -276,3 +352,4 @@ class HdEdit extends ConsumerWidget {
     );
   }
 }
+

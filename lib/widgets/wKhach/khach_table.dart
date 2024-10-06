@@ -53,6 +53,13 @@ class KhachTable extends ConsumerWidget {
         textAlign: PlutoColumnTextAlign.center,
         enableSorting: false,
         type: PlutoColumnType.text(),
+        footerRenderer: (e) {
+          return PlutoAggregateColumnFooter(
+              padding: const EdgeInsets.only(right: 5),
+              alignment: Alignment.centerRight,
+              rendererContext: e,
+              type: PlutoAggregateColumnType.count);
+        },
         width: 40),
     ConfigPluto.column(
         title: 'MaKH',

@@ -7,6 +7,9 @@ final themeDataProvider = Provider<ThemeData>((ref) {
       shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(3))));
   return ThemeData(
+    scrollbarTheme: ScrollbarThemeData(
+      thickness: WidgetStatePropertyAll(3)
+    ),
       appBarTheme: const AppBarTheme(
           toolbarHeight: 25, shadowColor: Colors.black, elevation: 2),
       drawerTheme: const DrawerThemeData(

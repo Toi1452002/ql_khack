@@ -13,7 +13,7 @@ class MenuDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final color = context.colorScheme.primary;
     final textStyle = context.textTheme.bodyMedium!.copyWith(color: Colors.white);
-    final user = ref.watch(userProvider);
+    final user = ref.read(userProvider);
     return Drawer(
       width: 250,
       backgroundColor: color,

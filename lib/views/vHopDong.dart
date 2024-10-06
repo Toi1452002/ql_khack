@@ -6,25 +6,23 @@ import 'package:ql_khach/widgets/widgets.dart';
 
 import '../utils/utils.dart';
 import '../providers/providers.dart';
-
+import 'package:jiffy/jiffy.dart';
 
 
 class VHopDong extends ConsumerWidget {
   VHopDong({super.key});
 
   void _onNew(BuildContext context, WidgetRef ref) async{
-    // final rLstKhach = ref.read(lstKhachProvider.notifier);
     final rProduct = ref.read(productProvider.notifier);
-
-    // rLstKhach.state = await ref.read(hopdongProvider.notifier).getLstKhach();
     await rProduct.onGetAllProduct();
     await rProduct.onGetAllProductDetail();
-
     await showDialog(context: context,barrierDismissible: false, builder: (context){
       return Dialog(
+        alignment: Alignment.topCenter,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 10,vertical: 50),
         child: SizedBox(
           width: 590,
-          height: 350,
+          height: 450,
           child: HdEdit(),
         ),
       );
@@ -53,10 +51,11 @@ class VHopDong extends ConsumerWidget {
 
     await showDialog(context: context,barrierDismissible: false, builder: (context){
       return Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 10),
+        alignment: Alignment.topCenter,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 10,vertical: 50),
         child: SizedBox(
           width: 590,
-          height: 370,
+          height: 450,
           child: HdEdit(
             hopdong: hopdong,
           ),
@@ -75,14 +74,25 @@ class VHopDong extends ConsumerWidget {
 
     Hopdong hopdong = ref.watch(lstHopDongProvider).firstWhere((e)=>e.id==maHD);
     ref.read(hdGHThoiHanPVD.notifier).state = hopdong.thoiHan.toString();
-    DateTime dateGH = DateTime.parse(hopdong.ngayHetHan).add(Duration(days: numThoiHan[hopdong.thoiHan.toString()]));
-    ref.read(hdGHNgayHetHanPVD.notifier).state = dateGH;
+    DateTime date = DateTime.parse(hopdong.ngayHetHan);
+    var dateHH = Jiffy.parseFromDateTime(date);
+    if(hopdong.thoiHan == 0)      dateHH = dateHH;
+    if(hopdong.thoiHan == 1) dateHH  = dateHH.add(months: 1);
+    if(hopdong.thoiHan == 2) dateHH  = dateHH.add(months: 3);
+    if(hopdong.thoiHan == 3) dateHH  = dateHH.add(years: 1);
+    if(hopdong.thoiHan == 4) dateHH  = dateHH.add(days: 3);
+
+
+
+    // DateTime dateGH = DateTime.parse(hopdong.ngayHetHan).add(Duration(days: numThoiHan[hopdong.thoiHan.toString()]));
+
+    ref.read(hdGHNgayHetHanPVD.notifier).state = dateHH.dateTime;
     showDialog(context: context, builder: (context){
       return Dialog(
-        insetPadding: EdgeInsets.symmetric(horizontal: 10),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 10),
         child: SizedBox(
           width: 450,
-          height: 270,
+          height: 400,
           child: HdGiahan(hd: hopdong,),
         ),
       );
@@ -116,18 +126,32 @@ class VHopDong extends ConsumerWidget {
     });
   }
 
+
+  void _refresh(HdTableNotifier hdTable, WidgetRef ref){
+    hdTable.stateManager.setFilter(null);
+    ref.refresh(hopdongProvider);
+    ref.read(hdMaHD.notifier).state = null;
+    ref.refresh(hdFilterTH);
+    ref.refresh(hdFilterDN);
+  }
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hdTable = ref.read(hdTableProvider.notifier);
     final rLstKhach = ref.read(lstKhachProvider.notifier);
+    // final wLstHopDong = ref.watch(lstHopDongProvider);
     final size = context.deviceSize.width;
     int? maHD = ref.watch(hdMaHD);
     ref.listen(hopdongProvider, (_, state) async {
       if(state is HopdongLoaded){
-        hdTable.addAllRow(state.lstHopdong);
+        hdTable.filter(state.lstHopdong);
         ref.refresh(hdMaHD);
         ref.read(lstHopDongProvider.notifier).state = state.lstHopdongCopy;
+        ref.read(lstHopDongViewPVD.notifier).state = state.lstHopdong;
         rLstKhach.state = await ref.read(hopdongProvider.notifier).getLstKhach(); // get danh sach khach de edit
+        // _refresh(hdTable, ref);
+        ref.refresh(hdFilterTH);
+        ref.refresh(hdFilterDN);
+        hdTable.stateManager.setFilter(null);
 
       }
       if(state is HopdongLoading){
@@ -185,10 +209,7 @@ class VHopDong extends ConsumerWidget {
             message: 'Refresh',
             child: WiconButton(
               icon: Icons.refresh,
-              onTap: () {
-                ref.refresh(hopdongProvider);
-                ref.read(hdMaHD.notifier).state = null;
-              },
+              onTap: () => _refresh(hdTable, ref),
             ),
           ),
           const Gap(15),

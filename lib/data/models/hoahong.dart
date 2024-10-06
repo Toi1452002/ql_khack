@@ -14,6 +14,7 @@ class Hoahong {
   String user;
   int maHD;
   String ngayThu;
+  String noiDung;
   Hoahong({
     this.id,
     required this.phieuThuID,
@@ -22,6 +23,7 @@ class Hoahong {
     required this.hoaHong,
     required this.hoaHongThang,
     this.dateCreated = '',
+    this.noiDung = '',
     this.userNameCreated = '',
     this.dateModified = '',
     this.userNameModified = '',
@@ -42,6 +44,7 @@ class Hoahong {
       'UserNameCreated': userNameCreated,
       'DateModified': dateModified,
       'UserNameModified': userNameModified,
+      'NoiDung': noiDung
     };
   }
 
@@ -49,13 +52,14 @@ class Hoahong {
     return Hoahong(
       id: map['ID'].toString().toInt,
       phieuThuID: map['MaPhieu'].toString().toInt,
-      userID: map['userID'].toString().toInt,
+      userID: map['UserID'].toString().toInt,
       tyleHH: map['TyLeHH'].toString().toDouble,
       hoaHong: map['HoaHong'].toString().toDouble,
       hoaHongThang: map['HoaHongThang'] ?? '',
       user: map['User']??'',
       maHD: map['MaHD'].toString().toInt,
-      ngayThu: map['NgayThu']??''
+      ngayThu: map['NgayThu'].trim()??'',
+      noiDung: map['NoiDung']??''
       // dateCreated: map['dateCreated'] ?? '',
       // userNameCreated: map['userNameCreated'] ?? '',
       // dateModified: map['dateModified'] ?? '',

@@ -1,4 +1,3 @@
-import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -20,6 +19,9 @@ class Vphieuthu extends ConsumerWidget {
       if(state is PhieuThuError){
         SmartAlert().showError(state.message);
       }
+      if(state is PhieuThuSuccess){
+        SmartAlert().showSuccess(state.message);
+      }
 
       if(state is PhieuThuLoaded){
         SmartDialog.dismiss();
@@ -27,7 +29,23 @@ class Vphieuthu extends ConsumerWidget {
           final rDoanhSo = ref.read(ptDoanhSoPVD.notifier);
           final rChuaXacNhan = ref.read(ptChuaXacNhanPVD.notifier);
           final rChuaThanhToan = ref.read(ptChuaThanhToanPVD.notifier);
+          final rTinhHH = ref.read(ptTinhHoaHong.notifier);
+          int thang = DateTime.now().month;
+          int year = DateTime.now().year;
+          final tmp = state.lstPhieuThu.where((e){
+            List<String> lstThang = e.thang.split('-');
 
+
+            bool bY = int.parse(lstThang.first) > year;
+            bool bT = int.parse(lstThang.last) >= thang;
+            if(int.parse(lstThang.first) > year){
+              return bY &&  e.TTTT != false && e.xacNhan != false;
+            }else if(int.parse(lstThang.first) == year && bT){
+              return true &&  e.TTTT != false && e.xacNhan != false;
+            }
+            return false;
+          });
+          rTinhHH.state = tmp.toList();
           rChuaThanhToan.state = state.lstPhieuThu.where((e)=>e.TTTT == false).toList();
           rChuaXacNhan.state = state.lstPhieuThu.where((e)=>e.xacNhan == false && e.TTTT == true).toList();
           rDoanhSo.state = state.lstPhieuThu.where((e)=>e.xacNhan == true).toList();
@@ -37,10 +55,9 @@ class Vphieuthu extends ConsumerWidget {
     });
 
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-
         body: Column(
           children: [
             SizedBox(
@@ -49,13 +66,15 @@ class Vphieuthu extends ConsumerWidget {
                 padding: EdgeInsets.zero,
                 tabs: [
                   const FittedBox(child: Text('Doanh số')),
+                  const FittedBox(child: Text('Tính HH')),
                   FittedBox(child: Text('Chưa xác nhận (${wChuaXacNhan.length})')),
                   FittedBox(child: Text('Chưa thanh toán (${wChuaThanhToan.length})')),
                 ],
               ),
             ),
-            const Expanded(child: TabBarView(children: [
+            Expanded(child: TabBarView(children: [
               PtTableDoanhso(),
+              PtTinhHoahong(),
               PtChuaxacnhan(),
               PtChuathanhtoan(),
             ]))

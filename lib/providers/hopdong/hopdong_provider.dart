@@ -8,6 +8,10 @@ final lstHopDongProvider = StateProvider<List<Hopdong>>((ref) {
   return [];
 });
 
+final lstHopDongViewPVD = StateProvider<List<Hopdong>>((ref) {
+  return [];
+});
+
 
 final hopdongProvider = StateNotifierProvider.autoDispose<HopdongNotifier, HopdongState>((ref) {
   return HopdongNotifier();
@@ -28,6 +32,7 @@ final hdThoiHanPVD = StateProvider<String>((ref) {
 
 final hdDoanhNghiepPVD = StateProvider<bool>((ref)=>false);//state checkBox Doanh nghiep
 final hdHieuLucpPVD = StateProvider<bool>((ref)=>false);//state checkBox Hieu Luc
+final hdKhachOffline = StateProvider.autoDispose<bool>((ref)=>false);//state checkBox Hieu Luc
 
 
 
@@ -54,4 +59,6 @@ final hdDsMaKichHoatPVD = StateProvider<List<DsKichhoat>>((ref) {
 });
 
 
+final hdFilterTH = StateProvider.autoDispose<String>((ref)=>'1');
+final hdFilterDN = StateProvider.autoDispose<bool>((ref)=>false);
 

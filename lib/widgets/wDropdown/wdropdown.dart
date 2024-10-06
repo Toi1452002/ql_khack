@@ -22,7 +22,7 @@ class Wdropdown extends StatelessWidget {
   double? width;
   double? height;
   bool screenSmall;
-  void Function(Object?)? onChanged;
+  void Function(String?)? onChanged;
   String? selected;
   List<String>? lstSelected;
   List<DropdownItem> data;

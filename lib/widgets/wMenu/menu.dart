@@ -8,8 +8,10 @@ import 'package:ql_khach/widgets/wMenu/menu_drawer.dart';
 
 class Menu extends ConsumerWidget {
   Widget child;
-
   Menu({super.key, required this.child});
+
+  final _key = GlobalKey<ScaffoldState>();
+
   FocusNode node = FocusNode();
   _openDrawer(WidgetRef ref, bool val) {
     ref.read(menuProvider.notifier).show(val);
@@ -28,11 +30,12 @@ class Menu extends ConsumerWidget {
     final textTheme = context.textTheme;
     final menuState = ref.watch(menuProvider);
     return Scaffold(
+      key: _key,
       drawer: const MenuDrawer(),
       appBar: AppBar(
         titleSpacing: 5,
         leading: InkWell(
-            onTap: () => _openDrawer(ref, !menuState.isShow),
+            onTap: () => _key.currentState!.openDrawer(),
             child: const Icon(
               Icons.menu,
               color: Colors.white,
@@ -43,22 +46,11 @@ class Menu extends ConsumerWidget {
           style: textTheme.titleMedium!.copyWith(color: Colors.white),
         ),
         actions: [
-          InkWell(onTap: () => _onLogout(ref),child: Icon(Icons.login_outlined,color: Colors.white,size: 20,)),
-          Gap(10),
-          // TextButton(
-          //     onPressed: () => _onLogout(ref),
-              // child: Text(
-              //   'Đăng xuất',
-              //   style: textTheme.bodySmall!.copyWith(color: Colors.white),
-              // ))
+          InkWell(onTap: () => _onLogout(ref),child: const Icon(Icons.login_outlined,color: Colors.white,size: 20,)),
+          const Gap(10),
         ],
       ),
-      body: Row(
-        children: [
-          Visibility(visible: menuState.isShow, child: MenuDrawer()),
-          Expanded(child: child)
-        ],
-      ),
+      body: child,
     );
   }
 }

@@ -13,7 +13,10 @@ final lstHoaHongPVD = StateProvider<List<Hoahong>>((ref) {
   return [];
 });
 
+final lstHoaHongAllPVD = StateProvider<List<Hoahong>>((ref) {
+  return [];
+});
 
-final lstHoaHongCopyPVD = StateProvider.autoDispose<List<Hoahong>>((ref) {
+final lstHoaHongCopyPVD = StateProvider<List<Hoahong>>((ref) {
   return ref.watch(lstHoaHongPVD);
 });
