@@ -15,6 +15,7 @@ class Hoahong {
   int maHD;
   String ngayThu;
   String noiDung;
+  String maSPCT;
   Hoahong({
     this.id,
     required this.phieuThuID,
@@ -29,7 +30,8 @@ class Hoahong {
     this.userNameModified = '',
     this.ngayThu = '',
     this.maHD = 0,
-    this.user = ''
+    this.user = '',
+    this.maSPCT = ''
   });
 
   Map<String, dynamic> toMap() {
@@ -59,11 +61,8 @@ class Hoahong {
       user: map['User']??'',
       maHD: map['MaHD'].toString().toInt,
       ngayThu: map['NgayThu'].trim()??'',
-      noiDung: map['NoiDung']??''
-      // dateCreated: map['dateCreated'] ?? '',
-      // userNameCreated: map['userNameCreated'] ?? '',
-      // dateModified: map['dateModified'] ?? '',
-      // userNameModified: map['userNameModified'] ?? '',
+      noiDung: map['NoiDung']??'',
+      maSPCT: map['MaSPCT']??''
     );
   }
 }

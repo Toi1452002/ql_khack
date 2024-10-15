@@ -31,13 +31,35 @@ final router = [
         GoRoute(
             path: '/bang-ke-phieu-thu',
             name: RouterName.bangKePhieuThu,
-            pageBuilder: (_, state) =>
-                buildPageTransition(context: _, state: state, child: Vphieuthu())),
+            pageBuilder: (_, state) => buildPageTransition(
+                context: _, state: state, child: Vphieuthu())),
         GoRoute(
-            path: '/hoa-hong',
-            name: RouterName.hoaHong,
-            pageBuilder: (_, state) =>
-                buildPageTransition(context: _, state: state, child: Vhoahong())),
+          path: '/hoa-hong',
+          name: RouterName.hoaHong,
+          pageBuilder: (_, state) => buildPageTransition(
+            context: _,
+            state: state,
+            child: Vhoahong(),
+          ),
+        ),
+        GoRoute(
+          path: '/nguoi-nhan-hoa-hong',
+          name: RouterName.nguoinhanHH,
+          pageBuilder: (_, state) => buildPageTransition(
+            context: _,
+            state: state,
+            child: VNguoinhanhh(),
+          ),
+        ),
+        GoRoute(
+          path: '/quan-ly-user',
+          name: RouterName.qlUser,
+          pageBuilder: (_, state) => buildPageTransition(
+            context: _,
+            state: state,
+            child: VquanlyUser(),
+          ),
+        ),
       ]),
   GoRoute(
       path: '/login',

@@ -2,8 +2,6 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:ql_khach/providers/hopdong/hopdong.dart';
-import 'package:ql_khach/providers/khach/ds_khach/ds_khach_provider.dart';
 import 'package:ql_khach/utils/utils.dart';
 import 'package:ql_khach/widgets/widgets.dart';
 

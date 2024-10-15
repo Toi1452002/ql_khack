@@ -34,15 +34,15 @@ class PtEditPhieuthuState extends ConsumerState<PtEditPhieuthu> {
   void onUpdate() {
     final user = ref.watch(userProvider);
     Phieuthu pt = Phieuthu(
-        id: widget.phieuthu.id,
-        nguoiNop: txtNguoiNop.text.trim(),
-        soTien: txtSoTien.text.trim().toDouble,
-        noiDung: txtNoiDung.text.trim(),
-        thang: Helper.yM(txtThang.text.trim()),
-        dsThang: Helper.yM(txtDsThang.text.trim()),
-        ngayThu: Helper.dMYtoYMD(txtNgayThu.text.trim()),
-        dateModified: Helper.nowYmdT,
-        userNameModified:user!.username,
+      id: widget.phieuthu.id,
+      nguoiNop: txtNguoiNop.text.trim(),
+      soTien: txtSoTien.text.trim().toDouble,
+      noiDung: txtNoiDung.text.trim(),
+      thang: Helper.yM(txtThang.text.trim()),
+      dsThang: Helper.yM(txtDsThang.text.trim()),
+      ngayThu: Helper.dMYtoYMD(txtNgayThu.text.trim()),
+      dateModified: Helper.nowYmdT,
+      userNameModified: user!.username,
     );
     ref.read(phieuThuProvider.notifier).onSuaPhieuThu(pt);
     _close();
@@ -111,8 +111,8 @@ class PtEditPhieuthuState extends ConsumerState<PtEditPhieuthu> {
                         DateTime? pickedDate = await showWebDatePicker(
                           context: textFieldKey.currentContext!,
                           initialDate: Helper.dMytoDate(txtNgayThu.text),
-                          firstDate:
-                              DateTime.now().subtract(const Duration(days: 3650)),
+                          firstDate: DateTime.now()
+                              .subtract(const Duration(days: 3650)),
                           lastDate:
                               DateTime.now().add(const Duration(days: 14000)),
                           width: 250,
@@ -140,10 +140,11 @@ class PtEditPhieuthuState extends ConsumerState<PtEditPhieuthu> {
                   ),
                   const Gap(15),
                   Expanded(
-                      child: Wtextfield(
-                    controller: txtNoiDung,
-                    label: ' Nội dung',
-                  ))
+                    child: Wtextfield(
+                      controller: txtNoiDung,
+                      label: ' Nội dung',
+                    ),
+                  )
                 ],
               ),
               const Gap(20),
@@ -165,12 +166,18 @@ class PtEditPhieuthuState extends ConsumerState<PtEditPhieuthu> {
                 ],
               ),
               Gap(10),
-              Wtextfield(label: 'Key',readOnly: true,width: 200,controller: TextEditingController(text: widget.phieuthu.key),),
+              Wtextfield(
+                label: 'Key',
+                readOnly: true,
+                width: 200,
+                controller: TextEditingController(text: widget.phieuthu.key),
+              ),
               const Spacer(),
               Align(
                   alignment: Alignment.centerRight,
-                  child:
-                      FilledButton(onPressed: ()=>onUpdate(), child: const Text('Chấp nhận')))
+                  child: FilledButton(
+                      onPressed: () => onUpdate(),
+                      child: const Text('Chấp nhận')))
             ],
           ),
         ),

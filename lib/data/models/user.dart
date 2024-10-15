@@ -7,6 +7,7 @@ class User{
   String fullname;
   int level;
   String token;
+  bool nhanHH;
 
   User({
     this.id,
@@ -15,24 +16,26 @@ class User{
     required this.fullname,
     required this.level,
     required this.token,
+    this.nhanHH = false,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'username': username,
-      'password': password,
-      'fullname': fullname,
-      'level': level,
-      'token': token,
+      'ID': id,
+      'UserName': username,
+      'PassWord': password,
+      'FullName': fullname,
+      'Level': level,
+      'Token': token,
+      'NhanHH':nhanHH.toString().toInt
     };
   }
 
 
-  // @override
-  // String toString() {
-  //   return 'User{id: $id, username: $username, password: $password, fullname: $fullname, level: $level, token: $token}';
-  // }
+  @override
+  String toString() {
+    return 'User{id: $id, username: $username, password: $password, fullname: $fullname, level: $level, token: $token}';
+  }
 
 
   factory User.fromMap(Map<String, dynamic> map) {
@@ -43,6 +46,7 @@ class User{
       fullname: map['FullName'] ??'',
       level: map['Level'].toString().toInt ,
       token: map['Token']??'' ,
+      nhanHH: map['NhanHH'].toString().toBool
     );
   }
 

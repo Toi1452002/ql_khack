@@ -25,7 +25,7 @@ class MenuDrawer extends ConsumerWidget {
               padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     backgroundColor: Colors.white,
                     child: Text('RGB'),
                   ),
@@ -68,7 +68,15 @@ class MenuDrawer extends ConsumerWidget {
             icon: Icons.currency_exchange,
             routerName: RouterName.hoaHong,
           ),
-          Spacer(),
+          if(user.level>1)MenuItem(
+            icon: Icons.person,
+            routerName: RouterName.nguoinhanHH,
+          ),
+          if(user.level>1) MenuItem(
+            icon: Icons.supervised_user_circle_outlined,
+            routerName: RouterName.qlUser,
+          ),
+          const Spacer(),
           Text('Phiên bản: ${VERSION}',style: textStyle),
         ],
       ),

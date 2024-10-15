@@ -272,7 +272,7 @@ class HdEditState extends ConsumerState<HdEdit> {
                         initialDate:
                         Helper.dMytoDate(txtNgayHetHan.text),
                         firstDate: DateTime.now()
-                            .subtract(const Duration(days: 7)),
+                            .subtract(const Duration(days: 3650)),
                         lastDate: DateTime.now()
                             .add(const Duration(days: 14000)),
                         width: 250,

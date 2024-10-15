@@ -13,13 +13,13 @@ class Vhoahong extends ConsumerStatefulWidget {
 }
 
 class VhoahongState extends ConsumerState<Vhoahong> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    final user = ref.read(userProvider);
-    ref.read(hoaHongProvider.notifier).onGetHoaHong(ref, user!);
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   final user = ref.read(userProvider);
+  //   ref.read(hoaHongProvider.notifier).onGetHoaHong(ref, user!);
+  //   super.initState();
+  // }
   @override
   Widget build(BuildContext context) {
     return const Scaffold(

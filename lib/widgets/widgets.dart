@@ -8,3 +8,6 @@ export 'wHopDong/wHopDong.dart';
 export 'walert.dart';
 export 'wPhieuThu/wPhieuThu.dart';
 export 'wHoaHong/wHoaHong.dart';
+export 'wQuanlyUser/qlus.dart';
+export 'wHome/wHome.dart';
+export 'wDatatable.dart';

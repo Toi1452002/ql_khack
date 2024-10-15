@@ -10,7 +10,14 @@ class UserData {
     return await _dio.post(PathServer.user, data: formData);
   }
 
-  Future<Response> getAllUser() async{
-    return await _dio.get(PathServer.user,queryParameters: PathServer.push(type: 'get-all-user'));
+  Future<Response> getAllUser() async {
+    return await _dio.get(PathServer.user,
+        queryParameters: PathServer.push(type: 'get-all-user'));
+  }
+
+  Future<Response> updatePassword(int id, String pass) async {
+    final formData = FormData.fromMap(PathServer.push(
+        type: 'update-password', data: {'ID': id, 'PassWord': pass}));
+    return await _dio.post(PathServer.user, data: formData);
   }
 }

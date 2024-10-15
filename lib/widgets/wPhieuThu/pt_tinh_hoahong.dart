@@ -420,7 +420,7 @@ class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
       DataCell(
         Wdropdown(
           data: [
-            DropdownItem(value: '', title: ''),
+            // DropdownItem(value: '', title: ''),
             ...cbbThang.map((e) => DropdownItem(value: e, title: e))
           ],
           selected: wFilter.thang,
@@ -435,7 +435,7 @@ class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
       DataCell(
         Wdropdown(
           data: [
-            DropdownItem(value: '', title: ''),
+            // DropdownItem(value: '', title: ''),
             ...cbbMaSPCT.map((e) => DropdownItem(value: e, title: e))
           ],
           selected: wFilter.maSPCT,

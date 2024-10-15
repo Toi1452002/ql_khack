@@ -11,7 +11,6 @@ class HoahongNotifier extends StateNotifier<HoahongState> {
   final _hoaHongData = HoahongData();
 
   Future<void> onGetHoaHong(WidgetRef ref, User user)async{
-    // state = HoahongLoading();
     try{
       final rps = await _hoaHongData.get(HoaHongDataType.getAllHoaHong);
       if(rps.statusCode == 200){
@@ -36,6 +35,7 @@ class HoahongNotifier extends StateNotifier<HoahongState> {
 
 
   Future<void> onAddHoaHong(List<Map<String, dynamic>> data) async{
+    print(data);
     try{
       final rps = await _hoaHongData.post({
         'listData':jsonEncode(data)

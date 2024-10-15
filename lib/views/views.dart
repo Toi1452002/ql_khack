@@ -4,3 +4,5 @@ export 'vKhach.dart';
 export 'vLogin.dart';
 export 'vPhieuThu.dart';
 export 'vHoaHong.dart';
+export 'vQuanly_user.dart';
+export 'v_nguoinhanHH.dart';

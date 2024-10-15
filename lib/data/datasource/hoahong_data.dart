@@ -5,6 +5,8 @@ import '../../config/config.dart';
 abstract class HoaHongDataType{
   static String get insert => 'add-hoa-hong';
   static String get getAllHoaHong => 'get-all-hoa-hong';
+  static String get getUserHoaHong => 'get-user-hoa-hong';
+  static String get getAllHoaHongKhac => 'get-all-hoa-hong-khac';
   static String get updateTyLe => 'update-ty-le';
   static String get updateNoiDung => 'update-noi-dung';
   static String get updateHoaHong => 'update-hoa-hong';

@@ -20,25 +20,26 @@ class PtTableDoanhso extends ConsumerStatefulWidget {
 }
 
 class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
-
-  final txtDsThang = TextEditingController();
+  // final txtDsThang = TextEditingController();
+  String selectThang = DateFormat('MM/yyyy').format(DateTime.now());
 
   void _onRefresh(WidgetRef ref) {
     ref.refresh(phieuThuProvider);
     ref.refresh(filterDoanSoPVD);
     ref.refresh(sortColumnPVD);
     ref.refresh(isSortPVD);
-    txtDsThang.text = DateFormat('MM/yyyy').format(DateTime.now());
-
+    setState(() {
+      selectThang = DateFormat('MM/yyyy').format(DateTime.now());
+    });
+    // txtDsThang.text = DateFormat('MM/yyyy').format(DateTime.now());
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    txtDsThang.text = DateFormat('MM/yyyy').format(DateTime.now());
-    super.initState();
-  }
-
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   // txtDsThang.text = DateFormat('MM/yyyy').format(DateTime.now());
+  //   super.initState();
+  // }
 
   void _onFilter(WidgetRef ref) {
     final wFilter = ref.watch(filterDoanSoPVD);
@@ -57,16 +58,22 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
           wFilter.tenMoRong == null || wFilter.tenMoRong == e.tenMoRong;
       bool nguoiThu =
           wFilter.nguoiThu == null || wFilter.nguoiThu == e.nguoiThu;
-      bool soTien =
-          wFilter.soTien == null || wFilter.soTien == Helper.formatNum(e.soTien);
-      return phieu && maHD && ngayThu && thang && tenMoRong && nguoiThu && soTien;
+      bool soTien = wFilter.soTien == null ||
+          wFilter.soTien == Helper.formatNum(e.soTien);
+      return phieu &&
+          maHD &&
+          ngayThu &&
+          thang &&
+          tenMoRong &&
+          nguoiThu &&
+          soTien;
     }).toList();
   }
 
   _itemCenter(String val) => Align(
-    alignment: Alignment.center,
-    child: Text(val),
-  );
+        alignment: Alignment.center,
+        child: Text(val),
+      );
 
   Widget _title(String text) {
     return Padding(
@@ -74,8 +81,6 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
       child: Text(text),
     );
   }
-
-
 
   void _onShowAddPhieuThu(BuildContext context) {
     showDialog(
@@ -88,13 +93,15 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
           );
         });
   }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
     final colorMain = context.colorScheme.primary;
     final wDsBase = ref.watch(ptDoanhSoPVD);
     final wDoanhSo = ref.watch(ptDoanhSoCopyPVD);
-
+    final thangDS = wDsBase.map((e) => '${e.dsThang}-01').toSet().toList();
+    thangDS.sort((a,b)=>b.compareTo(a));
     final tongDS = wDoanhSo.fold(0, (a, b) => a + b.soTien.toInt());
     return Padding(
       padding: const EdgeInsets.all(5),
@@ -145,161 +152,151 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
             Row(
               children: [
                 const Text('Doanh số tháng: '),
-                Wtextfield(
-                  width: 150,
-                  controller: txtDsThang,
-                  suffixIcon: FilledButton(
-                    onPressed: () {
-                      List lstThang = txtDsThang.text.split('/');
-                      ref.refresh(filterDoanSoPVD);
-                      ref.read(ptDoanhSoCopyPVD.notifier).state = wDsBase.where((e)=>e.dsThang=="${lstThang.last}-${lstThang.first}").toList();
-                      // ref.read(phieuThuProvider.notifier).onGetPhieuThu(
-                      //     thang: "${lstThang.last}-${lstThang.first}");
-                    },
-                    child: const Text('ok'),
-                  ),
+                Wdropdown(
+                  selected: selectThang,
+                  search: true,
+                  width: 100,
+                  data: thangDS
+                      .map((e) => DropdownItem(value: DateFormat('MM/yyyy').format(DateTime.parse(e)), title: DateFormat('MM/yyyy').format(DateTime.parse(e))))
+                      .toList(),
+                  onChanged: (val) {
+                    setState(() {
+                      selectThang = val!;
+                    });
+                    ref.read(ptDoanhSoCopyPVD.notifier).state = wDsBase.where((e)=>e.dsThang==Helper.yM(val)).toList();
+                          // ref.read(phieuThuProvider.notifier).onGetPhieuThu(
+                          //     thang: Helper.yM(val));
+                  },
                 )
+                // Wtextfield(
+                //   width: 150,
+                //   controller: txtDsThang,
+                //   suffixIcon: FilledButton(
+                //     onPressed: () {
+                //       List lstThang = txtDsThang.text.split('/');
+                //       ref.refresh(filterDoanSoPVD);
+                //       ref.read(ptDoanhSoCopyPVD.notifier).state = wDsBase.where((e)=>e.dsThang=="${lstThang.last}-${lstThang.first}").toList();
+                //       // ref.read(phieuThuProvider.notifier).onGetPhieuThu(
+                //       //     thang: "${lstThang.last}-${lstThang.first}");
+                //     },
+                //     child: const Text('ok'),
+                //   ),
+                // )
               ],
             ),
             const Gap(5),
             Expanded(
                 child: DataTable2(
-                  minWidth: 1100,
-                  fixedTopRows: 2,
-                  border: TableBorder.all(color: colorMain, width: .5),
-                  headingTextStyle: textTheme.titleSmall!
-                      .copyWith(fontSize: 12, color: Colors.blue.shade900),
-                  dataTextStyle: textTheme.bodySmall!.copyWith(fontSize: 12),
-                  headingRowHeight: 25,
-                  dataRowHeight: 25,
-                  columnSpacing: 0,
-                  horizontalMargin: 0,
-                  sortColumnIndex: ref.watch(sortColumnPVD),
-                  sortAscending: ref.watch(isSortPVD),
-                  headingRowColor:
+              minWidth: 1100,
+              fixedTopRows: 2,
+              border: TableBorder.all(color: colorMain, width: .5),
+              headingTextStyle: textTheme.titleSmall!
+                  .copyWith(fontSize: 12, color: Colors.blue.shade900),
+              dataTextStyle: textTheme.bodySmall!.copyWith(fontSize: 12),
+              headingRowHeight: 25,
+              dataRowHeight: 25,
+              columnSpacing: 0,
+              horizontalMargin: 0,
+              sortColumnIndex: ref.watch(sortColumnPVD),
+              sortAscending: ref.watch(isSortPVD),
+              headingRowColor:
                   WidgetStatePropertyAll(colorMain.withOpacity(.2)),
-                  empty: Center(
-                      child: Text(
-                        'No data',
-                        style: textTheme.titleMedium!.copyWith(
-                            color: colorMain),
-                      )),
-                  columns: [
-                    const DataColumn2(label: Text(''), fixedWidth: 30),
-                    DataColumn2(
-                        label: _title('Phieu'),
-                        fixedWidth: 60,
-                        onSort: (i, t) {
-                          ref
-                              .read(sortColumnPVD.notifier)
-                              .state = i;
-                          if (ref.watch(isSortPVD)) {
-                            wDoanhSo.sort((a, b) => b.id!.compareTo(a.id!));
-                          } else {
-                            wDoanhSo.sort((a, b) => a.id!.compareTo(b.id!));
-                          }
-                          ref
-                              .read(isSortPVD.notifier)
-                              .state =
+              empty: Center(
+                  child: Text(
+                'No data',
+                style: textTheme.titleMedium!.copyWith(color: colorMain),
+              )),
+              columns: [
+                const DataColumn2(label: Text(''), fixedWidth: 30),
+                DataColumn2(
+                    label: _title('Phieu'),
+                    fixedWidth: 60,
+                    onSort: (i, t) {
+                      ref.read(sortColumnPVD.notifier).state = i;
+                      if (ref.watch(isSortPVD)) {
+                        wDoanhSo.sort((a, b) => b.id!.compareTo(a.id!));
+                      } else {
+                        wDoanhSo.sort((a, b) => a.id!.compareTo(b.id!));
+                      }
+                      ref.read(isSortPVD.notifier).state =
                           !ref.watch(isSortPVD);
-                        }),
-                    DataColumn2(
-                        label: _title('MaHD'),
-                        fixedWidth: 80,
-                        onSort: (i, t) {
-                          ref
-                              .read(sortColumnPVD.notifier)
-                              .state = i;
-                          if (ref.watch(isSortPVD)) {
-                            wDoanhSo
-                                .sort((a, b) =>
-                                b.hopDongID.compareTo(a.hopDongID));
-                          } else {
-                            wDoanhSo
-                                .sort((a, b) =>
-                                a.hopDongID.compareTo(b.hopDongID));
-                          }
-                          ref
-                              .read(isSortPVD.notifier)
-                              .state =
+                    }),
+                DataColumn2(
+                    label: _title('MaHD'),
+                    fixedWidth: 80,
+                    onSort: (i, t) {
+                      ref.read(sortColumnPVD.notifier).state = i;
+                      if (ref.watch(isSortPVD)) {
+                        wDoanhSo
+                            .sort((a, b) => b.hopDongID.compareTo(a.hopDongID));
+                      } else {
+                        wDoanhSo
+                            .sort((a, b) => a.hopDongID.compareTo(b.hopDongID));
+                      }
+                      ref.read(isSortPVD.notifier).state =
                           !ref.watch(isSortPVD);
-                        }),
-                    DataColumn2(
-                        label: _title('Ngày thu'),
-                        fixedWidth: 120,
-                        onSort: (i, t) {
-                          ref
-                              .read(sortColumnPVD.notifier)
-                              .state = i;
-                          if (ref.watch(isSortPVD)) {
-                            wDoanhSo
-                                .sort((a, b) =>
-                                b.ngayThu!.compareTo(a.ngayThu!));
-                          } else {
-                            wDoanhSo
-                                .sort((a, b) =>
-                                a.ngayThu!.compareTo(b.ngayThu!));
-                          }
-                          ref
-                              .read(isSortPVD.notifier)
-                              .state =
+                    }),
+                DataColumn2(
+                    label: _title('Ngày thu'),
+                    fixedWidth: 120,
+                    onSort: (i, t) {
+                      ref.read(sortColumnPVD.notifier).state = i;
+                      if (ref.watch(isSortPVD)) {
+                        wDoanhSo
+                            .sort((a, b) => b.ngayThu!.compareTo(a.ngayThu!));
+                      } else {
+                        wDoanhSo
+                            .sort((a, b) => a.ngayThu!.compareTo(b.ngayThu!));
+                      }
+                      ref.read(isSortPVD.notifier).state =
                           !ref.watch(isSortPVD);
-                        }),
-                    DataColumn2(
-                        label: _title(
-                          'Tên mở rộng',
-                        ),
-                        fixedWidth: 100),
-                    DataColumn2(label: _title('Người thu'), fixedWidth: 150),
-                    DataColumn2(label: _title('Người nộp'),fixedWidth: 150),
-                    DataColumn2(label: _title('Nội dung')),
-                    DataColumn2(label: _title('DSTháng'),fixedWidth: 100),
-                    DataColumn2(
-                        label: _title('Tháng'),
-                        fixedWidth: 100,
-                        onSort: (i, t) {
-                          ref
-                              .read(sortColumnPVD.notifier)
-                              .state = i;
-                          if (ref.watch(isSortPVD)) {
-                            wDoanhSo.sort((a, b) => b.thang.compareTo(a.thang));
-                          } else {
-                            wDoanhSo.sort((a, b) => a.thang.compareTo(b.thang));
-                          }
-                          ref
-                              .read(isSortPVD.notifier)
-                              .state =
+                    }),
+                DataColumn2(
+                    label: _title(
+                      'Tên mở rộng',
+                    ),
+                    fixedWidth: 150),
+                DataColumn2(label: _title('Người thu'), fixedWidth: 100),
+                DataColumn2(label: _title('Người nộp'), fixedWidth: 150),
+                DataColumn2(label: _title('Nội dung')),
+                DataColumn2(label: _title('DSTháng'), fixedWidth: 100),
+                DataColumn2(
+                    label: _title('Tháng'),
+                    fixedWidth: 100,
+                    onSort: (i, t) {
+                      ref.read(sortColumnPVD.notifier).state = i;
+                      if (ref.watch(isSortPVD)) {
+                        wDoanhSo.sort((a, b) => b.thang.compareTo(a.thang));
+                      } else {
+                        wDoanhSo.sort((a, b) => a.thang.compareTo(b.thang));
+                      }
+                      ref.read(isSortPVD.notifier).state =
                           !ref.watch(isSortPVD);
-                        }),
-                    DataColumn2(
-                        label: _title('Số tiền'),
-                        numeric: true,
-                        fixedWidth: 80,
-                        onSort: (i, t) {
-                          ref
-                              .read(sortColumnPVD.notifier)
-                              .state = i;
-                          if (ref.watch(isSortPVD)) {
-                            wDoanhSo.sort((a, b) =>
-                                b.soTien.compareTo(a.soTien));
-                          } else {
-                            wDoanhSo.sort((a, b) =>
-                                a.soTien.compareTo(b.soTien));
-                          }
-                          ref
-                              .read(isSortPVD.notifier)
-                              .state =
+                    }),
+                DataColumn2(
+                    label: _title('Số tiền'),
+                    numeric: true,
+                    fixedWidth: 80,
+                    onSort: (i, t) {
+                      ref.read(sortColumnPVD.notifier).state = i;
+                      if (ref.watch(isSortPVD)) {
+                        wDoanhSo.sort((a, b) => b.soTien.compareTo(a.soTien));
+                      } else {
+                        wDoanhSo.sort((a, b) => a.soTien.compareTo(b.soTien));
+                      }
+                      ref.read(isSortPVD.notifier).state =
                           !ref.watch(isSortPVD);
-                        }),
-                    // const DataColumn2(label: Text(''), fixedWidth: 30),
-                  ],
-                  rows: _rows(wDoanhSo, ref, context),
-                ))
+                    }),
+                // const DataColumn2(label: Text(''), fixedWidth: 30),
+              ],
+              rows: _rows(wDoanhSo, ref, context),
+            ))
           ],
         ),
       ),
     );
   }
+
   List<DataRow2> _rows(List<Phieuthu> pt, WidgetRef ref, BuildContext context) {
     List<DataRow2> row = [];
     final wFilter = ref.watch(filterDoanSoPVD);
@@ -323,7 +320,10 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
       DataCell(
         Wdropdown(
           // data: [DropdownItem(value: '', title: ''), ...cbbPhieu],
-          data: cbbPhieu.map((e)=>DropdownItem(value: e.toString(), title: e.toString())).toList(),
+          data: cbbPhieu
+              .map(
+                  (e) => DropdownItem(value: e.toString(), title: e.toString()))
+              .toList(),
           selected: wFilter.phieu,
           height: 25,
           search: true,
@@ -341,7 +341,7 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
             //   title: '',
             // ),
             ...cbbMaHD.map(
-                    (e) => DropdownItem(value: e.toString(), title: e.toString()))
+                (e) => DropdownItem(value: e.toString(), title: e.toString()))
           ],
           selected: wFilter.maHD,
           height: 25,
@@ -418,7 +418,8 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
       DataCell(
         Wdropdown(
           data: [
-            ...cbbSoTien.map((e) => DropdownItem(value: Helper.formatNum(e), title: Helper.formatNum(e)))
+            ...cbbSoTien.map((e) => DropdownItem(
+                value: Helper.formatNum(e), title: Helper.formatNum(e)))
           ],
           selected: wFilter.soTien,
           height: 25,
@@ -434,12 +435,12 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
 
     row.addAll(List.generate(
       pt.length,
-          (i) {
+      (i) {
         final data = pt[i];
         return DataRow2(
             color: i % 2 != 0
                 ? WidgetStatePropertyAll(
-                context.colorScheme.primary.withOpacity(.05))
+                    context.colorScheme.primary.withOpacity(.05))
                 : null,
             cells: [
               DataCell(_itemCenter("${i + 1}")),
@@ -459,7 +460,6 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
     return row;
   }
 }
-
 
 final filterDoanSoPVD = ChangeNotifierProvider.autoDispose<FilterDoanSo>((ref) {
   return FilterDoanSo();
@@ -503,6 +503,7 @@ class FilterDoanSo extends ChangeNotifier {
     nguoiThu = val;
     notifyListeners();
   }
+
   set setSoTien(String? val) {
     soTien = val;
     notifyListeners();

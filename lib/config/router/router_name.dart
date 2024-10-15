@@ -5,4 +5,6 @@ abstract class RouterName{
   static String get bangKePhieuThu => "Bảng kê phiếu thu";
   static String get login => "login";
   static String get hoaHong => "Hoa hồng";
+  static String get nguoinhanHH => "Người nhận hoa hồng";
+  static String get qlUser => "Quản lý User";
 }

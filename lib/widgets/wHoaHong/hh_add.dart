@@ -274,7 +274,7 @@ class HhAddState extends ConsumerState<HhAdd> {
                         DataColumn2(label: _title('User'), fixedWidth: 80),
                         DataColumn2(label: _title('NgayThu'), fixedWidth: 80),
                         DataColumn2(label: _title('HHThang')),
-                        DataColumn2(label: _title('Nội dung'), fixedWidth: 100),
+                        DataColumn2(label: _title('Nội dung'), fixedWidth: 150),
                         // DataColumn2(
                         //     label: _title('TyleHH'),
                         //     fixedWidth: 80,
@@ -486,7 +486,7 @@ class HhAddState extends ConsumerState<HhAdd> {
                         DataColumn2(label: _title('User'), fixedWidth: 80),
                         DataColumn2(label: _title('NgayThu'), fixedWidth: 80),
                         DataColumn2(label: _title('HHThang')),
-                        DataColumn2(label: _title('Nội dung'), fixedWidth: 100),
+                        DataColumn2(label: _title('Nội dung'), fixedWidth: 200),
                         // DataColumn2(
                         //     label: _title('TyleHH'),
                         //     fixedWidth: 80,
@@ -513,7 +513,7 @@ class HhAddState extends ConsumerState<HhAdd> {
                               DataCell(_title(Helper.dMy(e.ngayThu))),
                               DataCell(_title(Helper.My(e.hoaHongThang))),
                               DataCell(Wtextfield(
-                                width: 100,
+                                // width: 100,
                                 height: 24,
                                 readOnly: !userTrueLV,
                                 textAlign: TextAlign.start,
@@ -529,23 +529,6 @@ class HhAddState extends ConsumerState<HhAdd> {
                                 controller:
                                     TextEditingController(text: e.noiDung),
                               )),
-                              // DataCell(Wtextfield(
-                              //   width: 80,
-                              //   height: 24,
-                              //   readOnly: !userTrueLV,
-                              //   textAlign: TextAlign.end,
-                              //   noneBorder: true,
-                              //   onChanged: (val) {
-                              //     EasyDebounce.debounce('updateTL',
-                              //         const Duration(milliseconds: 500), () {
-                              //       ref
-                              //           .read(hoaHongProvider.notifier)
-                              //           .onUpdateTyLe(val.toDouble, e.id!);
-                              //     });
-                              //   },
-                              //   controller: TextEditingController(
-                              //       text: e.tyleHH.toStringAsFixed(0)),
-                              // )),
                               DataCell(Wtextfield(
                                 width: 80,
                                 height: 24,

@@ -10,6 +10,12 @@ class UserNotifier extends StateNotifier<UserState> {
   UserNotifier() : super(UserInit());
   final _userData = UserData();
   Future<void> onLogin(String username, String password) async{
+    if(username.isEmpty || password.isEmpty){
+      state = UserError(message: 'Đăng nhập thất bại');
+      return;
+    }
+
+
     state = UserLoading();
     try{
       final rsp = await _userData.login({
@@ -37,10 +43,25 @@ class UserNotifier extends StateNotifier<UserState> {
       final rps = await _userData.getAllUser();
       if(rps.statusCode==200){
         List data = jsonDecode(rps.data);
-        return data.map((e)=>User.fromMap(e)).toList();
+        return data.map((e)=>User.fromMap(e)).where((e)=>e.nhanHH==true).toList();
       }else{
         return [];
       }
+    }catch(e){
+      throw Exception(e);
+    }
+  }
+
+  Future<void> onUpdatePassword(int id, String pass) async{
+    try{
+      await _userData.updatePassword(id, pass);
+      // print(rps.data);
+      // if(rps.statusCode==200){
+      //   // List data = jsonDecode(rps.data);
+      //   // return data.map((e)=>User.fromMap(e)).toList();
+      // }else{
+      //   // return [];
+      // }
     }catch(e){
       throw Exception(e);
     }

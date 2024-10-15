@@ -1,14 +1,9 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:gap/gap.dart';
-import 'package:pluto_grid_plus/pluto_grid_plus.dart';
-import 'package:ql_khach/data/data.dart';
 import 'package:ql_khach/utils/utils.dart';
 import 'package:ql_khach/widgets/widgets.dart';
-import '../config/config_pluto.dart';
 import '../providers/providers.dart';
 
 
@@ -117,7 +112,7 @@ class Vkhach extends ConsumerWidget {
             }
             return Row(
               children: [
-                WtextButton(onPressed: ()=>_onNew(context),text: 'Thêm',icon: Icons.add,),
+                  WtextButton(onPressed: ()=>_onNew(context),text: 'Thêm',icon: Icons.add,),
                 WtextButton(onPressed: ()=>_onEdit(ref,context),enable: maKH!=null,text: 'Sửa',icon: Icons.edit,),
                 WtextButton(onPressed: ()=>_onKhachNgungTD(ref,context),text: 'Khách ngưng theo dõi',icon: Icons.edit_off_sharp,),
 
