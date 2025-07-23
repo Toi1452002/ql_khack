@@ -11,6 +11,7 @@ abstract class HoaHongDataType{
   static String get updateNoiDung => 'update-noi-dung';
   static String get updateHoaHong => 'update-hoa-hong';
   static String get deleteHoaHong => 'delete-hoa-hong';
+  static String get getHHID => 'get-hoa-hong-id';
 }
 
 class HoahongData{
@@ -21,7 +22,7 @@ class HoahongData{
     return _dio.post(PathServer.hoaHong,data: formData);
   }
 
-  Future<Response> get(String type){
-    return _dio.get(PathServer.hoaHong,queryParameters: PathServer.push(type: type));
+  Future<Response> get(String type,{Map<String, dynamic>? data}){
+    return _dio.get(PathServer.hoaHong,queryParameters: PathServer.push(type: type,data: data));
   }
 }

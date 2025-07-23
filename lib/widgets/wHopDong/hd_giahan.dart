@@ -223,8 +223,8 @@ class _HdGiahanState extends ConsumerState<HdGiahan> {
                       child: ColoredBox(
                         color: context.colorScheme.primary,
                         child: const Icon(
-                          Icons.code,
-                          size: 15,
+                          Icons.change_circle,
+                          size: 20,
                           color: Colors.white,
                         ),
                       ),

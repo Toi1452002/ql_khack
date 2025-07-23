@@ -15,8 +15,14 @@ class Helper{
     if(date==null) {
       return '';
     } else {
-      List<String> lstDate = date.split('-');
-      return "${lstDate.last}/${lstDate.first}";
+      if(date.contains('-')){
+        List<String> lstDate = date.split('-');
+        if(lstDate.length==2){
+          return "${lstDate.last}/${lstDate.first}";
+        }else {
+          return "${lstDate[1]}/${lstDate.first}";
+        }
+      }return date;
     }
   }
 

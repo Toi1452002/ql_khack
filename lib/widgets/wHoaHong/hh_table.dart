@@ -199,6 +199,7 @@ class HhTable extends ConsumerWidget {
     final wIsSort = ref.watch(hhIsSortPVD);
     final rIsSort = ref.read(hhIsSortPVD.notifier);
     return Scaffold(
+
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
@@ -210,6 +211,10 @@ class HhTable extends ConsumerWidget {
                 .map((e) => Helper.My(e.hoaHongThang))
                 .toSet()
                 .toList();
+
+            if(wCbbThang.isNotEmpty && !wCbbThang.contains(ref.read(hhFilterThangPVD))){
+              wCbbThang.add(ref.read(hhFilterThangPVD)!);
+            }
             data = data.where((e) {
               final thang = Helper.My(e.hoaHongThang) == ref.watch(hhFilterThangPVD);
               final bool phieuID = wFilHoaHong.phieuThuID == null ||

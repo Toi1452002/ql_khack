@@ -307,7 +307,7 @@ class HhAddState extends ConsumerState<HhAdd> {
                               noneBorder: true,
                               onChanged: (val) {
                                 EasyDebounce.debounce('updateND',
-                                    const Duration(milliseconds: 500), () {
+                                    const Duration(milliseconds: 100), () {
                                   ref
                                       .read(hoaHongProvider.notifier)
                                       .onUpdateNoiDung(val, e.id!);
@@ -341,7 +341,7 @@ class HhAddState extends ConsumerState<HhAdd> {
                               noneBorder: true,
                               onChanged: (val) {
                                 EasyDebounce.debounce('updateTL',
-                                    const Duration(milliseconds: 500), () {
+                                    const Duration(milliseconds: 100), () {
                                   ref
                                       .read(hoaHongProvider.notifier)
                                       .onUpdateHoaHong(val.toDouble, e.id!);
@@ -520,7 +520,7 @@ class HhAddState extends ConsumerState<HhAdd> {
                                 noneBorder: true,
                                 onChanged: (val) {
                                   EasyDebounce.debounce('updateND',
-                                      const Duration(milliseconds: 500), () {
+                                      const Duration(milliseconds: 100), () {
                                     ref
                                         .read(hoaHongProvider.notifier)
                                         .onUpdateNoiDung(val, e.id!);
@@ -537,7 +537,7 @@ class HhAddState extends ConsumerState<HhAdd> {
                                 noneBorder: true,
                                 onChanged: (val) {
                                   EasyDebounce.debounce('updateTL',
-                                      const Duration(milliseconds: 500), () {
+                                      const Duration(milliseconds: 100), () {
                                     ref
                                         .read(hoaHongProvider.notifier)
                                         .onUpdateHoaHong(val.toDouble, e.id!);

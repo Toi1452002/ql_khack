@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:ql_khach/data/data.dart';
 import 'package:ql_khach/providers/providers.dart';
 import 'package:ql_khach/utils/utils.dart';
+import 'package:ql_khach/widgets/wPhieuThu/pt_edit_phieuthu.dart';
 import 'package:ql_khach/widgets/wPhieuThu/pt_taophieuthu.dart';
 import 'package:ql_khach/widgets/widgets.dart';
 
@@ -33,13 +34,15 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
     });
     // txtDsThang.text = DateFormat('MM/yyyy').format(DateTime.now());
   }
-
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   // txtDsThang.text = DateFormat('MM/yyyy').format(DateTime.now());
-  //   super.initState();
-  // }
+  void _showEdit(Phieuthu pt){
+    showDialog(context: context, builder: (context){
+      return Dialog(
+        alignment: Alignment.topCenter,
+        insetPadding: EdgeInsets.symmetric(vertical: 50,horizontal: 5),
+        child: PtEditPhieuthu(phieuthu: pt,),
+      );
+    });
+  }
 
   void _onFilter(WidgetRef ref) {
     final wFilter = ref.watch(filterDoanSoPVD);
@@ -70,15 +73,15 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
     }).toList();
   }
 
-  _itemCenter(String val) => Align(
+  _itemCenter(String val,{Color? color}) => Align(
         alignment: Alignment.center,
-        child: Text(val),
+        child: Text(val,style: TextStyle(color: color)),
       );
 
   Widget _title(String text) {
     return Padding(
       padding: const EdgeInsets.only(left: 5, right: 5),
-      child: Text(text),
+      child: Text(text,),
     );
   }
 
@@ -96,18 +99,23 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
 
   @override
   Widget build(BuildContext context) {
+    final dateNow = DateFormat('MM/yyyy').format(DateTime.now());
     final textTheme = context.textTheme;
     final colorMain = context.colorScheme.primary;
     final wDsBase = ref.watch(ptDoanhSoPVD);
     final wDoanhSo = ref.watch(ptDoanhSoCopyPVD);
-    final thangDS = wDsBase.map((e) => '${e.dsThang}-01').toSet().toList();
+    final thangDS = wDsBase.map((e) => "${e.dsThang}-01").toSet().toList();
+
+
     thangDS.sort((a,b)=>b.compareTo(a));
+    if(!thangDS.contains("${Helper.yM(dateNow)}-01")){
+      thangDS.insert(0,dateNow);
+    }
     final tongDS = wDoanhSo.fold(0, (a, b) => a + b.soTien.toInt());
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        // bottomSheet: Text('Hello'),
         bottomNavigationBar: SizedBox(
           height: 40,
           child: ColoredBox(
@@ -153,11 +161,11 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
               children: [
                 const Text('Doanh số tháng: '),
                 Wdropdown(
-                  selected: selectThang,
+                  selected:  selectThang,
                   search: true,
                   width: 100,
                   data: thangDS
-                      .map((e) => DropdownItem(value: DateFormat('MM/yyyy').format(DateTime.parse(e)), title: DateFormat('MM/yyyy').format(DateTime.parse(e))))
+                      .map((e) => DropdownItem(value: Helper.My(e), title: Helper.My(e)))
                       .toList(),
                   onChanged: (val) {
                     setState(() {
@@ -168,20 +176,6 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
                           //     thang: Helper.yM(val));
                   },
                 )
-                // Wtextfield(
-                //   width: 150,
-                //   controller: txtDsThang,
-                //   suffixIcon: FilledButton(
-                //     onPressed: () {
-                //       List lstThang = txtDsThang.text.split('/');
-                //       ref.refresh(filterDoanSoPVD);
-                //       ref.read(ptDoanhSoCopyPVD.notifier).state = wDsBase.where((e)=>e.dsThang=="${lstThang.last}-${lstThang.first}").toList();
-                //       // ref.read(phieuThuProvider.notifier).onGetPhieuThu(
-                //       //     thang: "${lstThang.last}-${lstThang.first}");
-                //     },
-                //     child: const Text('ok'),
-                //   ),
-                // )
               ],
             ),
             const Gap(5),
@@ -207,7 +201,8 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
                 style: textTheme.titleMedium!.copyWith(color: colorMain),
               )),
               columns: [
-                const DataColumn2(label: Text(''), fixedWidth: 30),
+                const DataColumn2(label: SizedBox(), fixedWidth: 20),
+                const DataColumn2(label: SizedBox(), fixedWidth: 30),
                 DataColumn2(
                     label: _title('Phieu'),
                     fixedWidth: 60,
@@ -299,6 +294,7 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
 
   List<DataRow2> _rows(List<Phieuthu> pt, WidgetRef ref, BuildContext context) {
     List<DataRow2> row = [];
+    final user = ref.read(userProvider);
     final wFilter = ref.watch(filterDoanSoPVD);
     final rFilter = ref.read(filterDoanSoPVD.notifier);
 
@@ -316,6 +312,7 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
     cbbNgayThu.sort();
     cbbSoTien.sort();
     row.add(DataRow2(cells: [
+      const DataCell(SizedBox()),
       const DataCell(SizedBox()),
       DataCell(
         Wdropdown(
@@ -443,8 +440,47 @@ class PtTableDoanhsoState extends ConsumerState<PtTableDoanhso> {
                     context.colorScheme.primary.withOpacity(.05))
                 : null,
             cells: [
+              DataCell(InkWell(onTap: user?.id != 1 ? null :  (){
+                final txtPassword = TextEditingController();
+
+                showDialog(context: context, builder: (context){
+                  return Dialog(
+                    child: Container(
+                      color: Colors.yellow.shade50,
+                      padding: const EdgeInsets.all(10),
+                      width: 300,
+                      height: 50,
+                      child: Row(children: [
+                        Wtextfield(hintText: 'Xác minh mật khẩu để xóa',width: 200,autofocus: true,controller: txtPassword,obscureText: true,),
+                        const Spacer(),
+                        ElevatedButton(onPressed: (){
+                          if(txtPassword.text == user!.password){
+                            SmartAlert().showInfo('Phiếu này sẽ bị xóa vĩnh viễn',onConfirm: (){
+
+                              ref.read(phieuThuProvider.notifier).onDeletePhieuThu(data.id!).whenComplete((){
+                                if(mounted){
+                                  Navigator.pop(context);
+                                }
+                                // ref.refresh(hopdongProvider);
+                                // SmartAlert().showSuccess('Xóa thành công!');
+
+                              });
+                            });
+                          }else{
+                            Navigator.pop(context);
+                            SmartAlert().showInfo('Xóa thất bại!');
+                          }
+                        }, child: const Text('Ok'))
+                      ],),
+                    ),
+                  );
+                });
+              },child:  Icon(Icons.delete,color: user?.id != 1 ? Colors.grey : Colors.red,size: 20,))),
               DataCell(_itemCenter("${i + 1}")),
-              DataCell(_itemCenter(data.id.toString())),
+
+              DataCell(_itemCenter(data.id.toString(),color: Colors.red), onDoubleTap:  user?.id != 1 ? null : (){
+                _showEdit(data);
+              }),
               DataCell(_itemCenter(data.hopDongID.toString())),
               DataCell(_title(Helper.dMy(data.ngayThu))),
               DataCell(_title(data.tenMoRong)),

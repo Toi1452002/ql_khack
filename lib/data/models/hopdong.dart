@@ -72,6 +72,7 @@ class Hopdong {
       'NgayHetHan':ngayHetHan,
       'KhachOffline': khachOffline,
       'Seri': seri,
+      'MaKichHoat': maKichHoat,
       'UserNameCreated': userNameCreated,
       'UserNameModified': userNameModified,
       'DateModified': dateModified,

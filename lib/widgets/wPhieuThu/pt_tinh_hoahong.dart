@@ -1,6 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
 import 'package:ql_khach/data/data.dart';
 import 'package:ql_khach/providers/providers.dart';
 import 'package:ql_khach/utils/utils.dart';
@@ -19,8 +20,9 @@ class PtTinhHoahong extends ConsumerStatefulWidget {
 class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
 
   // final txtDsThang = TextEditingController();
-
+  final txtHHThang = TextEditingController();
   void _onRefresh(WidgetRef ref) {
+    txtHHThang.clear();
     ref.refresh(phieuThuProvider);
     ref.refresh(filterTinhHoaHongPVD);
     ref.refresh(sortTinhHHPVD);
@@ -115,8 +117,6 @@ class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
     final textTheme = context.textTheme;
     final colorMain = context.colorScheme.tertiary;
     final wTinhHH = ref.watch(ptTinhHoaHongCopy);
-
-
     final tongDS = wTinhHH.fold(0, (a, b) => a + b.soTien.toInt());
     return Padding(
       padding: const EdgeInsets.all(5),
@@ -159,6 +159,26 @@ class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
         ),
         body: Column(
           children: [
+            Row(
+              children: [
+                const Text('Hoa hồng tháng: '),
+                Wtextfield(width: 100,hintText: 'mm/yyyyy',controller: txtHHThang,),
+                Gap(5),
+                FilledButton(onPressed: (){
+                  final date = Helper.yM(txtHHThang.text.trim());
+                  if(txtHHThang.text.trim().isNotEmpty){
+                    final lst = ref.watch(ptDoanhSoPVD).where((e)=>e.thang == date).toList();
+
+                    ref.read(ptTinhHoaHong.notifier).state = lst;
+                  }else{
+                    _onRefresh(ref);
+                  }
+
+                }, child: Text('OK'))
+
+              ],
+            ),
+            Gap(5),
             Expanded(
                 child: DataTable2(
                   minWidth: 1100,

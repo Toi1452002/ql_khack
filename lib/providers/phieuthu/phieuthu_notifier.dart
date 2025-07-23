@@ -3,21 +3,23 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:ql_khach/data/data.dart';
+import 'package:ql_khach/data/models/ds_kichhoat.dart';
 import 'package:ql_khach/providers/phieuthu/phieuthu_state.dart';
+import 'package:ql_khach/utils/extension.dart';
 
 class PhieuThuNotifier extends StateNotifier<PhieuThuState> {
   PhieuThuNotifier() : super(PhieuThuInit()){
     onGetPhieuThu();
   }
   final _ptData = PhieuthuData();
-
-  Future<void> onGetPhieuThu({String? thang})async{
+  final _hhData = HoahongData();
+  Future<void> onGetPhieuThu()async{
     state = PhieuThuLoading();
 
-    String DsThang = thang?? DateFormat('yyyy-MM').format(DateTime.now());
+    // String DsThang = thang?? DateFormat('yyyy-MM').format(DateTime.now());
     try{
       final rps = await _ptData.get(PhieuThuType.getPhieuThu,data: {
-        'DsThang': DsThang
+        // 'DsThang': DsThang
       });
       if(rps.statusCode == 200){
         List data = jsonDecode(rps.data);
@@ -50,6 +52,32 @@ class PhieuThuNotifier extends StateNotifier<PhieuThuState> {
   }
 
 
+  Future<void> onDeletePhieuThu(int id) async{
+    try{
+      final countHH = await _hhData.get(HoaHongDataType.getHHID,data: {
+        'ID' : id
+      });
+      final data = jsonDecode(countHH.data).toString();
+      // print(jsonDecode(countHH.data));
+      if(data == '0'){
+        final rps = await _ptData.post({
+          "ID": id
+        }, PhieuThuType.delete);
+        if(rps.statusCode == 200){
+          onGetPhieuThu();
+          state = PhieuThuSuccess(message: 'Xóa thành công');
+        }else{
+          state = PhieuThuError(message: "Error internet");
+        }
+      }else{
+          state = PhieuThuError(message: "Phiếu thu đang có hoa hồng, không thể xóa");
+      }
+
+    }catch(e){
+      state = PhieuThuError(message: e.toString());
+      throw Exception(e);
+    }
+  }
   Future<void> onXacNhanTTTT(int id, String ngayThu, String dsThang) async{
     try{
       state = PhieuThuLoading();

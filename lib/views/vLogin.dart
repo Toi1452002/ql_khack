@@ -66,6 +66,9 @@ class Vlogin extends ConsumerWidget {
                 ),
                 const Gap(15),
                 Wtextfield(
+                  onSubmitted: (val){
+                    _onLogin(ref);
+                  },
                   width: double.infinity,
                   controller: txtPassword,
                   hintText: 'Password',

@@ -170,4 +170,18 @@ class HopdongNotifier extends StateNotifier<HopdongState> {
       throw Exception(e);
     }
   }
+
+  Future<void> onUpdateMKH_off(int id, String mkh) async{
+    try{
+      final rps = await _hopDongData.updateHieuLuc({
+        'ID': id
+      });
+      if(rps.statusCode == 200){
+        state = HopdongSuccess(message: 'Update thành công');
+      }
+    }catch(e){
+      state = HopdongError(message: e.toString());
+      throw Exception(e);
+    }
+  }
 }

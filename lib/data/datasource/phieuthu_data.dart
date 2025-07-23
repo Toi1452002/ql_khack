@@ -4,6 +4,7 @@ import 'package:ql_khach/config/config.dart';
 abstract class PhieuThuType{
     static String get insert => 'add-phieu-thu';
     static String get update => 'sua-phieu-thu';
+    static String get delete => 'delete-phieu-thu';
     static String get getPhieuThu => 'get-phieu-thu';
     static String get xacNhanTT => 'xac-nhan-tt';
     static String get xacNhanTTTT => 'xac-nhan-tttt';

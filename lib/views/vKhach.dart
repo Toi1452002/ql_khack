@@ -36,7 +36,7 @@ class Vkhach extends ConsumerWidget {
             insetPadding: const EdgeInsets.symmetric(horizontal: 10),
             child: Container(
               width: 400,
-              height: 480,
+              height: 500,
               color: Colors.white,
               child: KhachEdit(
                 khach: khach,

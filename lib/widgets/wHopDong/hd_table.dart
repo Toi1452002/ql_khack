@@ -57,12 +57,12 @@ class HdTable extends ConsumerWidget {
                      width: 150,
                    ),
                    const Gap(15),
-                   Text('DN'),
+                   const Text('DN'),
                    Checkbox(value: wFilterDN, onChanged: (val){
                      ref.read(hdFilterDN.notifier).state = val!;
                    }),
                    const Gap(15),
-                   FilledButton(onPressed: ()=>_onFilter(wLstHD,wFilterTH,wFilterDN,hdTable), child: Text('Ok'))
+                   FilledButton(onPressed: ()=>_onFilter(wLstHD,wFilterTH,wFilterDN,hdTable), child: const Text('Ok'))
 
                  ],
                ),
@@ -72,7 +72,7 @@ class HdTable extends ConsumerWidget {
         ),
         Expanded(
           child: PlutoGrid(
-            columns: _columns,
+            columns: _columns(hdTable),
             rows: [],
             rowColorCallback: (e) {
               DateTime dateNow = DateTime.now();
@@ -114,7 +114,7 @@ class HdTable extends ConsumerWidget {
     );
   }
 
-  final List<PlutoColumn> _columns = [
+  List<PlutoColumn> _columns(HdTableNotifier hdTable)=> [
     ConfigPluto.column(
         title: 'Ngày hết hạn',
         field: 'NgayHetHan',
@@ -167,8 +167,9 @@ class HdTable extends ConsumerWidget {
             onDoubleTap: (){
               Clipboard.setData(ClipboardData(text: e.cell.value));
               SmartAlert().showSuccess('Copy thành công');
+              hdTable.stateManager.setCurrentCell(e.cell, e.rowIdx);
             },
-            child: Text(e.cell.value,style: TextStyle(
+            child: Text(e.cell.value,style: const TextStyle(
               fontSize: 12,
               overflow: TextOverflow.ellipsis
             ),),
@@ -221,6 +222,28 @@ class HdTable extends ConsumerWidget {
         title: 'Seri',
         field: 'Seri',
         width: 80,
+        // renderer: (e){
+        //   return InkWell(
+        //     onDoubleTap: (){
+        //       // Clipboard.setData(ClipboardData(text: e.cell.value));
+        //       // SmartAlert().showSuccess('Copy thành công');
+        //       String seri = e.cell.value;
+        //       if(seri!=''){
+        //         String banQuyen = createBanQuyen(seri);
+        //         // hdTable.stateManager.r
+        //         // print(e.row.cells['MaKichHoat']!.value);
+        //         e.row.cells['MaKichHoat']!.value = banQuyen;
+        //         // print(banQuyen);
+        //       }
+        //
+        //       hdTable.stateManager.setCurrentCell(e.cell, e.rowIdx);
+        //     },
+        //     child: Text(e.cell.value,style: const TextStyle(
+        //         fontSize: 12,
+        //         overflow: TextOverflow.ellipsis
+        //     ),),
+        //   );
+        // },
         type: const PlutoColumnTypeText()),
     ConfigPluto.column(
         title: 'SNCL',

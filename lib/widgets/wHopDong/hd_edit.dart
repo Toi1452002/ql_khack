@@ -10,6 +10,7 @@ import 'package:vph_web_date_picker/vph_web_date_picker.dart';
 
 class HdEdit extends ConsumerStatefulWidget {
   Hopdong? hopdong;
+
   HdEdit({super.key, this.hopdong});
 
   @override
@@ -23,6 +24,7 @@ class HdEditState extends ConsumerState<HdEdit> {
   final txtThucThu = TextEditingController(text: '0');
   final txtMoTa = TextEditingController();
   final txtNguonKhach = TextEditingController();
+  final txtSeri = TextEditingController();
 
   Future<void> _onEditHopDong(WidgetRef ref, BuildContext context) async {
     final thoiHan = ref.watch(hdThoiHanPVD);
@@ -46,6 +48,9 @@ class HdEditState extends ConsumerState<HdEdit> {
         moTa: txtMoTa.text.trim(),
         nguonKhach: txtNguonKhach.text.trim(),
         doanhNghiep: dn,
+        seri: txtSeri.text.trim(),
+        maKichHoat:
+            txtSeri.text.isNotEmpty ? createBanQuyen(txtSeri.text.trim()) : '',
         userNameCreated: user!.username,
         userNameModified: user.username,
         dateModified: Helper.nowYmdT,
@@ -82,7 +87,7 @@ class HdEditState extends ConsumerState<HdEdit> {
 
   @override
   void initState() {
-    if(widget.hopdong!=null){
+    if (widget.hopdong != null) {
       txtNguonKhach.text = widget.hopdong!.nguonKhach;
       txtMoTa.text = widget.hopdong!.moTa;
       txtPhi.text = widget.hopdong!.phi.toStringAsFixed(0);
@@ -91,6 +96,7 @@ class HdEditState extends ConsumerState<HdEdit> {
     }
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
@@ -145,20 +151,13 @@ class HdEditState extends ConsumerState<HdEdit> {
                       : '${selectKhach.maKH} - ${selectKhach.tenGoi}',
                   search: true,
                   data: lstKhach
-                      .map((e) =>
-                      DropdownItem(
+                      .map((e) => DropdownItem(
                           value: "${e.maKH} - ${e.tenGoi}",
                           title: "${e.maKH} - ${e.tenGoi}"))
                       .toList(),
                   onChanged: (val) {
-                    int maKh = val
-                        .toString()
-                        .split(' -')
-                        .first
-                        .toInt;
-                    ref
-                        .read(hdSelectKhachPVD.notifier)
-                        .state =
+                    int maKh = val.toString().split(' -').first.toInt;
+                    ref.read(hdSelectKhachPVD.notifier).state =
                         lstKhach.firstWhere((e) => e.maKH == maKh);
                   },
                   width: sizeSmall ? 100 : 200,
@@ -171,7 +170,7 @@ class HdEditState extends ConsumerState<HdEdit> {
                   controller: TextEditingController(
                       text: selectKhach == null ? '' : selectKhach.tenMoRong),
                 ),
-                Gap(10),
+                const Gap(10),
                 Expanded(
                   child: Wtextfield(
                     controller: txtNguonKhach,
@@ -193,8 +192,7 @@ class HdEditState extends ConsumerState<HdEdit> {
                       rProduct.changeProduct(val.toString());
                     },
                     data: wProduct.lstProduct
-                        .map((e) =>
-                        DropdownItem(
+                        .map((e) => DropdownItem(
                             value: e.maSP, title: "${e.maSP} ${e.moTa}"))
                         .toList()),
                 Wdropdown(
@@ -208,7 +206,7 @@ class HdEditState extends ConsumerState<HdEdit> {
                     data: wProduct.lstProductDetail
                         .map((e) => DropdownItem(value: e.ma, title: e.moTa))
                         .toList()),
-                Gap(10),
+                const Gap(10),
                 Expanded(
                   child: Wtextfield(
                     controller: txtMoTa,
@@ -236,7 +234,7 @@ class HdEditState extends ConsumerState<HdEdit> {
                     rThoiHan.state = val.toString();
                   },
                 ),
-                Spacer(),
+                const Spacer(),
                 Wtextfield(
                   label: 'Phí',
                   controller: txtPhi,
@@ -252,12 +250,27 @@ class HdEditState extends ConsumerState<HdEdit> {
               ],
             ),
             const Gap(10),
-            if (widget.hopdong == null)
-              Wtextfield(
-                label: 'Seri',
-                width: 200,
-                readOnly: widget.hopdong != null ? true : false,
-              ),
+            Wtextfield(
+              label: 'Seri',
+              width: 200,
+              readOnly: widget.hopdong != null ? true : false,
+              controller: txtSeri,
+              // suffixIcon: SizedBox(
+              //   child: InkWell(
+              //     onTap: (){
+              //       createBanQuyen('seri');
+              //     },
+              //     child: ColoredBox(
+              //       color: context.colorScheme.primary,
+              //       child: const Icon(
+              //         Icons.change_circle,
+              //         size: 20,
+              //         color: Colors.white,
+              //       ),
+              //     ),
+              //   ),
+              // ),
+            ),
             if (widget.hopdong != null)
               Wtextfield(
                 label: 'Ngày hết hạn',
@@ -269,12 +282,11 @@ class HdEditState extends ConsumerState<HdEdit> {
                     onPressed: () async {
                       DateTime? pickedDate = await showWebDatePicker(
                         context: textFieldKey.currentContext!,
-                        initialDate:
-                        Helper.dMytoDate(txtNgayHetHan.text),
-                        firstDate: DateTime.now()
-                            .subtract(const Duration(days: 3650)),
-                        lastDate: DateTime.now()
-                            .add(const Duration(days: 14000)),
+                        initialDate: Helper.dMytoDate(txtNgayHetHan.text),
+                        firstDate:
+                            DateTime.now().subtract(const Duration(days: 3650)),
+                        lastDate:
+                            DateTime.now().add(const Duration(days: 14000)),
                         width: 250,
                         // withoutActionButtons: true,
                         //weekendDaysColor: Colors.red,
@@ -289,7 +301,6 @@ class HdEditState extends ConsumerState<HdEdit> {
                       Icons.date_range,
                       size: 15,
                     )),
-
               ),
             const Gap(10),
             Row(
@@ -302,17 +313,17 @@ class HdEditState extends ConsumerState<HdEdit> {
                 const Text('Doanh nghiệp'),
               ],
             ),
-            if (widget.hopdong == null)
-              Row(
-                children: [
-                  Checkbox(
-                      value: wKhachOff,
-                      onChanged: (val) {
-                        rKhachOff.state = val!;
-                      }),
-                  const Text('Khách offline')
-                ],
-              ),
+            // if (widget.hopdong == null)
+            //   Row(
+            //     children: [
+            //       Checkbox(
+            //           value: wKhachOff,
+            //           onChanged: (val) {
+            //             rKhachOff.state = val!;
+            //           }),
+            //       const Text('Khách offline')
+            //     ],
+            //   ),
             if (widget.hopdong != null)
               Row(
                 children: [
@@ -352,4 +363,3 @@ class HdEditState extends ConsumerState<HdEdit> {
     );
   }
 }
-

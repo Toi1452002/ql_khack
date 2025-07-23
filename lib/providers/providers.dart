@@ -5,3 +5,4 @@ export 'user/user.dart';
 export 'product/product_provider.dart';
 export 'phieuthu/phieuthu.dart';
 export 'hoahong/hoahong_provider.dart';
+export 'dskichhoat_provider.dart';

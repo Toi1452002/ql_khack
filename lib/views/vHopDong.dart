@@ -55,7 +55,7 @@ class VHopDong extends ConsumerWidget {
         insetPadding: const EdgeInsets.symmetric(horizontal: 10,vertical: 50),
         child: SizedBox(
           width: 590,
-          height: 450,
+          height: 500,
           child: HdEdit(
             hopdong: hopdong,
           ),
@@ -92,7 +92,7 @@ class VHopDong extends ConsumerWidget {
         insetPadding: const EdgeInsets.symmetric(horizontal: 10),
         child: SizedBox(
           width: 450,
-          height: 400,
+          height: 430,
           child: HdGiahan(hd: hopdong,),
         ),
       );
@@ -109,7 +109,7 @@ class VHopDong extends ConsumerWidget {
     ref.read(hopdongProvider.notifier).onGetDsMaKichHoat(ref, maHD);
     showDialog(context: context, builder: (context){
       return Dialog(
-        child: HdDoiMkh(maHD: maHD,),
+        child: HdDsachMkh(maHD: maHD,),
       );
     });
   }
@@ -178,7 +178,7 @@ class VHopDong extends ConsumerWidget {
                 PopupMenuItem(height: 35,onTap: ()=>_onNew(context,ref),child: const Text('Thêm'),),
                 PopupMenuItem(height: 35,enabled: maHD!=null,onTap: ()=>_onEdit(context,ref),child: const Text('Sửa'),),
                 PopupMenuItem(height: 35,enabled:maHD!=null,onTap: ()=>_onGiaHan(context, ref),child: const Text('Gia hạn'),),
-                PopupMenuItem(height: 35,enabled:maHD!=null,onTap: ()=>_onDoiMKH(context,ref),child: const Text('Đổi MKH'),),
+                PopupMenuItem(height: 35,enabled:maHD!=null,onTap: ()=>_onDoiMKH(context,ref),child: const Text('MKH'),),
                 PopupMenuItem(height: 35,onTap: ()=>_hopDongKhongHieuLuc(context,ref),child: const Text('Hợp đồng không hiệu lực'),),
               ]);
             }
@@ -187,7 +187,7 @@ class VHopDong extends ConsumerWidget {
                 WtextButton(text: 'Thêm',icon: Icons.add,onPressed: ()=>_onNew(context,ref),),
                 WtextButton(text: 'Sửa',icon: Icons.edit,enable:maHD!=null,onPressed: ()=>_onEdit(context,ref),),
                 WtextButton(text: 'Gia hạn',icon: Icons.access_time_outlined,enable:maHD!=null,onPressed: ()=>_onGiaHan(context, ref),),
-                WtextButton(text: 'Đổi MKH',icon: Icons.code,enable:maHD!=null,onPressed: ()=>_onDoiMKH(context,ref),),
+                WtextButton(text: 'MKH',icon: Icons.code,enable:maHD!=null,onPressed: ()=>_onDoiMKH(context,ref),),
                 WtextButton(text: 'Hợp đồng không hiệu lực',icon: Icons.code,onPressed: ()=>_hopDongKhongHieuLuc(context,ref),),
               ],
             );

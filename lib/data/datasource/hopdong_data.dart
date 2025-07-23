@@ -59,4 +59,9 @@ class HopdongData {
     return _dio.post(PathServer.config,data: formData);
   }
 
+  Future<Response> updateMKH_off(Map<String, dynamic> data){
+    final formData = FormData.fromMap(PathServer.push(type: 'update-mkh-off',data: data));
+    return _dio.post(PathServer.hopdong,data: formData);
+  }
+
 }

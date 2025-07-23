@@ -21,14 +21,14 @@ final themeDataProvider = Provider<ThemeData>((ref) {
       textButtonTheme: TextButtonThemeData(style: buttonStyle()),
       filledButtonTheme: FilledButtonThemeData(style: buttonStyle()),
       outlinedButtonTheme: OutlinedButtonThemeData(style: buttonStyle()),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
           insetPadding: const EdgeInsets.symmetric(horizontal: 10),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))),
       datePickerTheme: DatePickerThemeData(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
           color: Colors.white),
       elevatedButtonTheme:

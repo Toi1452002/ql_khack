@@ -39,7 +39,7 @@ class VquanlyUser extends ConsumerWidget {
       return;
     }
 
-    if(user.level>0){
+    if(user.level>0 || user.id == 1){
       SmartAlert().showInfo(
           'Không thể xóa!'
       );

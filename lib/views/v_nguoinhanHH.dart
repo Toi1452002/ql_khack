@@ -28,7 +28,10 @@ class VNguoinhanhh extends ConsumerWidget {
       padding: const EdgeInsets.all(10),
       child: nguoiNhanHH.when(data: (data) {
         final lstThang = data.map((e)=>Helper.My(e.hoaHongThang)).toSet().toList();
-
+        if(!lstThang.contains(ref.watch(hhSelectThangPVD))){
+          lstThang.add(ref.watch(hhSelectThangPVD));
+          // ref.read(hhSelectThangPVD.notifier).state = lstThang.last;
+        }
         data = data.where((e){
           bool thang = Helper.My(e.hoaHongThang)==thangHH;
           bool user = userFilter==null || e.user==userFilter;
@@ -70,7 +73,10 @@ class VNguoinhanhh extends ConsumerWidget {
                   color: context.colorScheme.primary,
                   child: Row(
                     children: [
-                      SizedBox(height: 25,child: FilledButton(onPressed: ()=>_onRefresh(ref), child: const Icon(Icons.refresh))),
+                      SizedBox(height: 25,child: FilledButton(onPressed: (){
+                        _onRefresh(ref);
+                        ref.refresh(lstHoaHongKhacPVD);
+                      }, child: const Icon(Icons.refresh))),
                       const Spacer(),
                       Wtextfield(width: 100,readOnly: true,textAlign: TextAlign.end,controller: TextEditingController(text: Helper.formatNum(tongHoaHong.toDouble()))),
                     ],

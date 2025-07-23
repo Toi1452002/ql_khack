@@ -47,6 +47,8 @@ class PtChuaxacnhanState extends ConsumerState<PtChuaxacnhan> {
   );
   @override
   Widget build(BuildContext context) {
+    final user = ref.read(userProvider);
+
     final textTheme = context.textTheme;
     final wChuaXacNhan = ref.watch(ptChuaXacNhanPVD);
     final tongChuaXN = wChuaXacNhan.fold(0, (a, b) => a + b.soTien.toInt());
@@ -104,6 +106,7 @@ class PtChuaxacnhanState extends ConsumerState<PtChuaxacnhan> {
               style: textTheme.titleMedium!.copyWith(color: colorMain.shade900),
             )),
             columns: const [
+              DataColumn2(label: SizedBox(), fixedWidth: 20),
               DataColumn2(label: Text(''), fixedWidth: 20),
               DataColumn2(label: Text('Phieu'), fixedWidth: 40),
               DataColumn2(label: Text('MaHD'), fixedWidth: 50),
@@ -134,8 +137,45 @@ class PtChuaxacnhanState extends ConsumerState<PtChuaxacnhan> {
                         setState(() {});
                       },
                       cells: [
+                        DataCell(InkWell(onTap: user?.id != 1 ? null :  (){
+                          final txtPassword = TextEditingController();
+
+                          showDialog(context: context, builder: (context){
+                            return Dialog(
+                              child: Container(
+                                color: Colors.yellow.shade50,
+                                padding: const EdgeInsets.all(10),
+                                width: 300,
+                                height: 50,
+                                child: Row(children: [
+                                  Wtextfield(hintText: 'Xác minh mật khẩu để xóa',width: 200,autofocus: true,controller: txtPassword,obscureText: true,),
+                                  const Spacer(),
+                                  ElevatedButton(onPressed: (){
+                                    if(txtPassword.text == user!.password){
+                                      SmartAlert().showInfo('Phiếu này sẽ bị xóa vĩnh viễn',onConfirm: (){
+
+                                        ref.read(phieuThuProvider.notifier).onDeletePhieuThu(wChuaXacNhan[i].id!).whenComplete((){
+                                          if(mounted){
+                                            Navigator.pop(context);
+                                          }
+                                          // ref.refresh(hopdongProvider);
+                                          // SmartAlert().showSuccess('Xóa thành công!');
+
+                                        });
+                                      });
+                                    }else{
+                                      Navigator.pop(context);
+                                      SmartAlert().showInfo('Xóa thất bại!');
+                                    }
+                                  }, child: const Text('Ok'))
+                                ],),
+                              ),
+                            );
+                          });
+                        },child: Icon(Icons.delete,color: user?.id != 1 ? Colors.grey : Colors.red,size: 20,))),
+
                         DataCell(_itemCenter("${i + 1}")),
-                        DataCell(_itemCenter(wChuaXacNhan[i].id.toString()),onTap: (){
+                        DataCell(_itemCenter(wChuaXacNhan[i].id.toString(),color: Colors.red),onDoubleTap: (){
                           // print('object');
                           _showEdit(wChuaXacNhan[i]);
 
@@ -160,8 +200,8 @@ class PtChuaxacnhanState extends ConsumerState<PtChuaxacnhan> {
     );
   }
 
-  _itemCenter(String val) => Align(
+  _itemCenter(String val,{Color? color}) => Align(
         alignment: Alignment.center,
-        child: Text(val),
+        child: Text(val,style: TextStyle(color: color),),
       );
 }

@@ -16,22 +16,23 @@ class QlyUserNotifier extends AutoDisposeAsyncNotifier<List<User>> {
   Future<void> addUser(User user) async {
     List<User> lstUser = state.value!;
     state = AsyncValue.data(lstUser..add(user));
-    try{
-     await _dio.post(
-      PathServer.user,
-      data: FormData.fromMap(
-        PathServer.push(
-          type: 'add-user',
-          data: user.toMap(),
+    try {
+      final rps = await _dio.post(
+        PathServer.user,
+        data: FormData.fromMap(
+          PathServer.push(
+            type: 'add-user',
+            data: user.toMap(),
+          ),
         ),
-      ),
-    );
-    }catch(e){
+      );
+    } catch (e) {
       throw Exception(e);
     }
   }
+
   Future<void> updateUser(User user) async {
-    try{
+    try {
       await _dio.post(
         PathServer.user,
         data: FormData.fromMap(
@@ -42,43 +43,41 @@ class QlyUserNotifier extends AutoDisposeAsyncNotifier<List<User>> {
         ),
       );
       reload();
-    }catch(e){
+    } catch (e) {
       throw Exception(e);
     }
   }
 
-  Future<void> updateHH(int id, bool val) async{
+  Future<void> updateHH(int id, bool val) async {
     List<User> lstUser = state.value!;
-    int index = lstUser.indexWhere((e)=>e.id==id);
+    int index = lstUser.indexWhere((e) => e.id == id);
     lstUser[index].nhanHH = val;
 
     state = AsyncValue.data(lstUser);
 
-    try{
+    try {
       await _dio.post(
         PathServer.user,
         data: FormData.fromMap(
           PathServer.push(
             type: 'update-nhanHH',
-            data: {
-              'ID': id,
-              'NhanHH': val ? 1 : 0
-            },
+            data: {'ID': id, 'NhanHH': val ? 1 : 0},
           ),
         ),
       );
       // reload();
-    }catch(e){
+    } catch (e) {
       throw Exception(e);
     }
   }
-  Future<void> deleteUser(int id) async{
+
+  Future<void> deleteUser(int id) async {
     List<User> lstUser = state.value!;
-    int index = lstUser.indexWhere((e)=>e.id==id);
+    int index = lstUser.indexWhere((e) => e.id == id);
 
     state = AsyncValue.data(lstUser..removeAt(index));
 
-    try{
+    try {
       await _dio.post(
         PathServer.user,
         data: FormData.fromMap(
@@ -91,10 +90,11 @@ class QlyUserNotifier extends AutoDisposeAsyncNotifier<List<User>> {
         ),
       );
       // reload();
-    }catch(e){
+    } catch (e) {
       throw Exception(e);
     }
   }
+
   Future<void> reload() async {
     // Đặt trạng thái là loading trước khi làm mới dữ liệu
     state = const AsyncValue.loading();
@@ -102,8 +102,6 @@ class QlyUserNotifier extends AutoDisposeAsyncNotifier<List<User>> {
     // Sau đó cập nhật lại trạng thái bằng kết quả mới
     state = await AsyncValue.guard(() => fetchData());
   }
-
-
 
   Future<List<User>> fetchData() async {
     //  tải dữ liệu
