@@ -5,16 +5,18 @@ import 'package:ql_khach/providers/providers.dart';
 import 'package:ql_khach/utils/utils.dart';
 import 'package:gap/gap.dart';
 import 'package:ql_khach/widgets/wMenu/menu_item.dart';
+import 'package:shadcn_flutter/shadcn_flutter_extension.dart';
 
 class MenuDrawer extends ConsumerWidget {
   const MenuDrawer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final color = context.colorScheme.primary;
+    final color = context.theme.colorScheme.chart3;
     final textStyle = context.textTheme.bodyMedium!.copyWith(color: Colors.white);
     final user = ref.read(userProvider);
     return Drawer(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       width: 250,
       backgroundColor: color,
       child: Column(

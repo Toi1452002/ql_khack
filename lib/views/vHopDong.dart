@@ -47,7 +47,7 @@ class VHopDong extends ConsumerWidget {
     ref.read(hdHieuLucpPVD.notifier).state = hopdong.hieuLuc;
     rProduct.changeProduct(hopdong.maSP);
     rProduct.changeProductDetail(hopdong.maSPCT);
-    ref.read(hdSelectKhachPVD.notifier).state = wKhach.firstWhere((e)=>e.maKH == hopdong.khachID);
+    ref.read(hdSelectKhachPVD.notifier).state = wKhach.firstWhere((e)=>e.ID == hopdong.khachID);
 
     await showDialog(context: context,barrierDismissible: false, builder: (context){
       return Dialog(
@@ -116,7 +116,7 @@ class VHopDong extends ConsumerWidget {
 
   void _hopDongKhongHieuLuc(BuildContext context, WidgetRef ref){
     showDialog(context: context, builder: (context){
-      return const Dialog(
+      return  Dialog(
         child: SizedBox(
           width: 800,
           height: 400,

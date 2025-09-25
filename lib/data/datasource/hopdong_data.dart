@@ -4,9 +4,9 @@ import 'package:ql_khach/config/config.dart';
 class HopdongData {
   final _dio = Dio();
 
-  Future<Response> getViewHopDong() async {
+  Future<Response> getViewHopDong({int hl = 1}) async {
     return _dio.get(PathServer.hopdong,
-        queryParameters: PathServer.push(type: 'get-view-hopdong'));
+        queryParameters: PathServer.push(type: 'get-view-hopdong',data: {'HieuLuc':hl}));
   }
 
   Future<Response> getHopDong()async{
@@ -59,9 +59,9 @@ class HopdongData {
     return _dio.post(PathServer.config,data: formData);
   }
 
-  Future<Response> updateMKH_off(Map<String, dynamic> data){
-    final formData = FormData.fromMap(PathServer.push(type: 'update-mkh-off',data: data));
-    return _dio.post(PathServer.hopdong,data: formData);
-  }
+  // Future<Response> updateMKH_off(Map<String, dynamic> data){
+  //   final formData = FormData.fromMap(PathServer.push(type: 'update-mkh-off',data: data));
+  //   return _dio.post(PathServer.hopdong,data: formData);
+  // }
 
 }

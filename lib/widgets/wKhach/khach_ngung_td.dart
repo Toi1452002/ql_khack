@@ -22,7 +22,7 @@ class KhachNgungTd extends ConsumerWidget {
       Khach k = lstKhach[i];
       return DataRow2(cells: [
         DataCell(Align(alignment: Alignment.center,child: Text("${i+1}"))),
-        DataCell(Text(k.maKH.toString())),
+        DataCell(Text(k.ID.toString())),
         DataCell(Text(k.tenGoi.toString())),
         DataCell(Text(k.tenMoRong.toString())),
         DataCell(Text(k.diaChi.toString())),
@@ -31,7 +31,7 @@ class KhachNgungTd extends ConsumerWidget {
         DataCell(Text(Helper.dMy(k.dateModified!))),
         DataCell(onTap: (){
           SmartAlert().showInfo('Theo dõi khách này?',onConfirm: (){
-            ref.read(dsKNTDProvider.notifier).onUpdateTheoDoi(k.maKH).whenComplete((){
+            ref.read(dsKNTDProvider.notifier).onUpdateTheoDoi(k.ID).whenComplete((){
               ref.refresh(dsKNTDProvider);
             });
           });
@@ -51,7 +51,7 @@ class KhachNgungTd extends ConsumerWidget {
                   ElevatedButton(onPressed: (){
                     if(txtPassword.text == user!.password){
                       SmartAlert().showInfo('Sau khi xóa toàn bộ hợp đồng của khách này cũng sẽ mất ',onConfirm: (){
-                        ref.read(dsKNTDProvider.notifier).onDeleteKhach(k.maKH).whenComplete((){
+                        ref.read(dsKNTDProvider.notifier).onDeleteKhach(k.ID).whenComplete((){
                           Navigator.pop(context);
                           ref.refresh(dsKNTDProvider);
                           SmartAlert().showSuccess('Xóa thành công!');
@@ -79,6 +79,7 @@ class KhachNgungTd extends ConsumerWidget {
     final wDsKhachNTD = ref.watch(dsKNTDProvider);
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 30,
         automaticallyImplyLeading: false,
         backgroundColor: context.colorScheme.primary,
         actions: [

@@ -3,5 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ql_khach/app/app.dart';
 
 void main(){
-  runApp(const ProviderScope(child: App()));
+  runApp(
+      ProviderScope(child: App())  );
 }

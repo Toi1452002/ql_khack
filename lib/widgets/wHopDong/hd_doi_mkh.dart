@@ -70,6 +70,7 @@ class HdDoiMkh extends ConsumerWidget {
       height: 500,
       child: Scaffold(
         appBar: AppBar(
+          toolbarHeight: 30,
           automaticallyImplyLeading: false,
           backgroundColor: context.colorScheme.primary,
           title: Text(

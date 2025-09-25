@@ -1,5 +1,4 @@
 import 'package:clay_containers/clay_containers.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:gap/gap.dart';
@@ -7,7 +6,8 @@ import 'package:ql_khach/providers/providers.dart';
 import 'package:ql_khach/utils/alert.dart';
 import 'package:ql_khach/utils/extension.dart';
 import 'package:ql_khach/widgets/widgets.dart';
-
+import 'package:shadcn_flutter/shadcn_flutter.dart';
+import 'package:shadcn_flutter/shadcn_flutter_extension.dart';
 class Vlogin extends ConsumerWidget {
   Vlogin({super.key});
 
@@ -20,7 +20,6 @@ class Vlogin extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final wshowPass = ref.watch(showPasswordProvider);
-    final primaryColor = context.colorScheme.primary;
 
     ref.listen(userStateProvider, (_, state){
       if(state is UserLoading){
@@ -39,60 +38,56 @@ class Vlogin extends ConsumerWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: primaryColor,
-      body: Center(
-        child: ClayContainer(
-          color: primaryColor,
+      backgroundColor: context.theme.colorScheme.chart3,
+      child: Center(
+        child: OutlinedContainer(
           // emboss: true,
-          height: 240,
+          padding:  const EdgeInsets.all(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: .2),
+              offset: Offset(-3, 3),
+              blurRadius: 10,
+              spreadRadius: 5
+            )
+          ],
           width: 350,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'ĐĂNG NHẬP HỆ THỐNG',
-                  softWrap: false,
-                  style: context.textTheme.titleSmall!
-                      .copyWith(color: Colors.white),
-                ),
-                const Gap(30),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'ĐĂNG NHẬP HỆ THỐNG',
+                softWrap: false,
+              ).large.medium,
+              const Gap(30),
+              WidgetCustomRow(columnWidths: {0:80},items: [
+                Text('Username').medium,
                 Wtextfield(
-                  width: double.infinity,
                   controller: txtUsername,
-                  hintText: 'Username',
                   autofocus: true,
-                ),
-                const Gap(15),
+                )
+              ]),
+              const Gap(15),
+              WidgetCustomRow(columnWidths: {0:80},items: [
+                Text('Password').medium,
                 Wtextfield(
                   onSubmitted: (val){
                     _onLogin(ref);
                   },
-                  width: double.infinity,
                   controller: txtPassword,
-                  hintText: 'Password',
                   obscureText: wshowPass,
-                  suffixIcon: InkWell(
-                      onTap: () {
-                        ref.read(showPasswordProvider.notifier).state = !wshowPass;
-                      },
-                      child: Icon(
-                        Icons.remove_red_eye_outlined,
-                        size: 15,
-                        color: !wshowPass ? Colors.green : null,
-                      )),
-                ),
-                const Gap(15),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: ()=>_onLogin(ref),
-                    child: const Text('Login'),
-                  ),
                 )
-              ],
-            ),
+              ]),
+              const Gap(15),
+              Align(
+                alignment: Alignment.centerRight,
+                child: PrimaryButton(
+                  onPressed: ()=>_onLogin(ref),
+                  child: const Text('Login'),
+                ),
+              )
+            ],
           ),
           // depth: 30,
           // spread: 10,

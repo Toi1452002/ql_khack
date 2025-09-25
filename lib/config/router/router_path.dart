@@ -22,7 +22,7 @@ final router = [
             path: '/khach',
             name: RouterName.khach,
             pageBuilder: (_, state) =>
-                buildPageTransition(context: _, state: state, child: Vkhach())),
+                buildPageTransition(context: _, state: state, child: KhachView())),
         GoRoute(
             path: '/',
             name: RouterName.home,

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ql_khach/config/config.dart';
 import 'package:ql_khach/providers/providers.dart';
 import 'package:ql_khach/utils/utils.dart';
+import 'package:shadcn_flutter/shadcn_flutter_extension.dart';
 
 class MenuItem extends ConsumerWidget {
   IconData icon;
@@ -23,7 +24,7 @@ class MenuItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final color = context.colorScheme.primary;
+    final color = context.theme.colorScheme.chart3;
     final menuState = ref.watch(menuProvider);
     final bool isSelect = menuState.select == routerName;
 

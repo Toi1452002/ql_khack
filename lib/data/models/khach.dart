@@ -1,7 +1,8 @@
-import 'package:ql_khach/utils/utils.dart';
+// import 'package:ql_khach/utils/utils.dart';
+import 'package:string_validator/string_validator.dart';
 
 class Khach {
-  int maKH;
+  int ID;
   String tenGoi;
   String tenMoRong;
   String diaChi;
@@ -19,7 +20,7 @@ class Khach {
   String? dateCreated;
 
   Khach(
-      {this.maKH = 0,
+      {this.ID = 0,
       this.userNameCreated,
       this.userNameModified,
       this.maSP = '',
@@ -38,7 +39,7 @@ class Khach {
 
   Map<String, dynamic> toMap() {
     return {
-      'ID': maKH,
+      'ID': ID,
       'TenGoi': tenGoi,
       'TenMoRong': tenMoRong,
       'DiaChi': diaChi,
@@ -58,17 +59,17 @@ class Khach {
 
   factory Khach.fromMap(Map<String, dynamic> map) {
     return Khach(
-        maKH: map['MaKH'].toString() == 'null' ? map['ID'].toString().toInt : map['MaKH'].toString().toInt,
+        ID: int.parse(map['ID'].toString()),
         tenGoi: map['TenGoi'] ?? '',
         tenMoRong: map['TenMoRong'] ?? '',
         diaChi: map['DiaChi'] ?? '',
         nguonLienHe: map['NguonLienHe'] ?? '',
         tenCty: map['TenCty'] ?? '',
         maSP: map['MaSP'] ?? '',
-        soTien: map['SoTien'].toString().toDouble,
-        ghiChu: map['GhiChu'].toString() ?? '',
+        soTien: toDouble(map['SoTien'].toString()),
+        ghiChu: toString(map['GhiChu'].toString()),
         khuVuc: map['KhuVuc'] ?? '',
-        theoDoi: map['TheoDoi'].toString().toInt,
+        theoDoi: int.parse(map['TheoDoi'].toString()),
         dateCreated: map['DateCreated']??'',
         dateModified: map['DateModified']??'',
         dienThoai: map['DienThoai'] ?? '');

@@ -71,7 +71,7 @@ class Wtextfield extends StatelessWidget {
               // cursorHeight: 15,
 
               decoration: InputDecoration(
-                  fillColor: Colors.white,
+                  fillColor: Colors.grey.shade100,
                   filled: true,
                   hintText: hintText,
                   suffixIcon: suffixIcon,
@@ -83,11 +83,11 @@ class Wtextfield extends StatelessWidget {
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(2),
                       borderSide:
-                          BorderSide(color: noneBorder ? Colors.transparent : Colors.black, width: .3)),
+                          BorderSide(color: noneBorder ? Colors.transparent : Colors.black, width: .1)),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(2),
                       borderSide: BorderSide(
-                          color: noneBorder ? Colors.transparent : context.colorScheme.primary, width: .8))),
+                          color: noneBorder ? Colors.transparent : context.colorScheme.primary, width: .5))),
             )),
       ],
     );

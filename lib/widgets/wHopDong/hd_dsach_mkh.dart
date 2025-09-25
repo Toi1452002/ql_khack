@@ -37,8 +37,10 @@ class _HdDsachMkhState extends ConsumerState<HdDsachMkh> {
       width: 500,
       height: 500,
       child: Scaffold(
+
         backgroundColor: Colors.grey.shade100,
         appBar: AppBar(
+          toolbarHeight: 30,
           automaticallyImplyLeading: false,
           backgroundColor: context.colorScheme.primary,
           title: Text(

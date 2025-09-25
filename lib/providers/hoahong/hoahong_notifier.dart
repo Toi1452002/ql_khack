@@ -35,7 +35,6 @@ class HoahongNotifier extends StateNotifier<HoahongState> {
 
 
   Future<void> onAddHoaHong(List<Map<String, dynamic>> data) async{
-    print(data);
     try{
       final rps = await _hoaHongData.post({
         'listData':jsonEncode(data)

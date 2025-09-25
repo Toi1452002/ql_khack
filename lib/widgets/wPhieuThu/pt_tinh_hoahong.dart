@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:ql_khach/data/data.dart';
 import 'package:ql_khach/providers/providers.dart';
 import 'package:ql_khach/utils/utils.dart';
+import 'package:ql_khach/views/views.dart';
 import 'package:ql_khach/widgets/widgets.dart';
 
 final sortTinhHHPVD = StateProvider.autoDispose<int>((ref) => 4);
@@ -18,9 +19,9 @@ class PtTinhHoahong extends ConsumerStatefulWidget {
 }
 
 class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
-
   // final txtDsThang = TextEditingController();
   final txtHHThang = TextEditingController();
+
   void _onRefresh(WidgetRef ref) {
     txtHHThang.clear();
     ref.refresh(phieuThuProvider);
@@ -28,7 +29,6 @@ class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
     ref.refresh(sortTinhHHPVD);
     ref.refresh(isSortTinhHHPVD);
     // txtDsThang.text = DateFormat('MM/yyyy').format(DateTime.now());
-
   }
 
   @override
@@ -37,71 +37,66 @@ class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
     // txtDsThang.text = DateFormat('MM/yyyy').format(DateTime.now());
     super.initState();
   }
-  void _onShowAddHH(
-      BuildContext context, WidgetRef ref, int phieuID, String thang) async {
-    final user = ref.watch(userProvider);
-    await ref.read(hoaHongProvider.notifier).onGetHoaHong(ref, user!);
-    List<User> lstUser =
-    await ref.read(userStateProvider.notifier).onGetAllUser();
-    // print(lstUser);
-    ref.read(lstUserProvider.notifier).state = lstUser;
 
-    if (!context.mounted) return;
-
-    await showDialog(
-        context: context,
-        builder: (context) {
-          return SingleChildScrollView(
-            child: Dialog(
-              insetPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 50),
-              child: SizedBox(
-                width: 900,
-                height: 500,
-                child: HhAdd(
-                  hoahong: Hoahong(
-                      phieuThuID: phieuID,
-                      userID: 0,
-                      tyleHH: 0,
-                      hoaHong: 0,
-                      hoaHongThang: thang),
-                ),
-              ),
-            ),
-          );
-        });
+  void _onShowAddHH(BuildContext context, WidgetRef ref, int phieuID, String thang, String soTien, String maSP) async {
+    // showCustomDialog(context, title: "Bang tinh hoa hong", width: 400, height: 600, child: Scaffold());
+    BangTinhHoaHongView.show(context, phieuID, soTien, maSP);
+    // final user = ref.watch(userProvider);
+    // await ref.read(hoaHongProvider.notifier).onGetHoaHong(ref, user!);
+    List<User> lstUser = await ref.read(userStateProvider.notifier).onGetAllUser();
+    // // print(lstUser);
+    // ref.read(lstUserProvider.notifier).state = lstUser;
+    //
+    // if (!context.mounted) return;
+    //
+    // await showDialog(
+    //     context: context,
+    //     builder: (context) {
+    //       return SingleChildScrollView(
+    //         child: Dialog(
+    //           insetPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 50),
+    //           child: SizedBox(
+    //             width: 900,
+    //             height: 500,
+    //             child: HhAdd(
+    //               hoahong: Hoahong(
+    //                   phieuThuID: phieuID,
+    //                   userID: 0,
+    //                   tyleHH: 0,
+    //                   hoaHong: 0,
+    //                   hoaHongThang: thang),
+    //             ),
+    //           ),
+    //         ),
+    //       );
+    //     });
   }
 
   void _onFilter(WidgetRef ref) {
     final wFilter = ref.watch(filterTinhHoaHongPVD);
     final wTinhHHCopy = ref.watch(ptTinhHoaHongCopy);
-    final rTinhHHCopy  = ref.read(ptTinhHoaHongCopy.notifier);
+    final rTinhHHCopy = ref.read(ptTinhHoaHongCopy.notifier);
 
     rTinhHHCopy.state = wTinhHHCopy.where((e) {
       if (wFilter.tenMoRong == 'All') wFilter.tenMoRong = null;
       bool phieu = wFilter.phieu == null || wFilter.phieu == e.id.toString();
 
       bool maHD = wFilter.maHD == null || wFilter.maHD == e.hopDongID.toString();
-      bool maSPCT =
-          wFilter.maSPCT == null || wFilter.maSPCT == e.maSPCT.toString();
-      bool ngayThu =
-          wFilter.ngayThu == null || wFilter.ngayThu == Helper.dMy(e.ngayThu);
+      bool maSPCT = wFilter.maSPCT == null || wFilter.maSPCT == e.maSPCT.toString();
+      bool ngayThu = wFilter.ngayThu == null || wFilter.ngayThu == Helper.dMy(e.ngayThu);
       bool thang = wFilter.thang == null || wFilter.thang == Helper.My(e.thang);
-      bool tenMoRong =
-          wFilter.tenMoRong == null || wFilter.tenMoRong == e.tenMoRong;
-      bool nguoiThu =
-          wFilter.nguoiThu == null || wFilter.nguoiThu == e.nguoiThu;
-      bool dsThang =
-          wFilter.dsThang == null || wFilter.dsThang == Helper.My(e.dsThang);
-      bool soTien =
-          wFilter.soTien == null || wFilter.soTien == Helper.formatNum(e.soTien);
+      bool tenMoRong = wFilter.tenMoRong == null || wFilter.tenMoRong == e.tenMoRong;
+      bool nguoiThu = wFilter.nguoiThu == null || wFilter.nguoiThu == e.nguoiThu;
+      bool dsThang = wFilter.dsThang == null || wFilter.dsThang == Helper.My(e.dsThang);
+      bool soTien = wFilter.soTien == null || wFilter.soTien == Helper.formatNum(e.soTien);
       return phieu && maHD && ngayThu && thang && tenMoRong && nguoiThu && soTien && dsThang && maSPCT;
     }).toList();
   }
 
   _itemCenter(String val) => Align(
-    alignment: Alignment.center,
-    child: Text(val),
-  );
+        alignment: Alignment.center,
+        child: Text(val),
+      );
 
   Widget _title(String text) {
     return Padding(
@@ -109,8 +104,6 @@ class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
       child: Text(text),
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -162,167 +155,134 @@ class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
             Row(
               children: [
                 const Text('Hoa hồng tháng: '),
-                Wtextfield(width: 100,hintText: 'mm/yyyyy',controller: txtHHThang,),
+                Wtextfield(
+                  width: 100,
+                  hintText: 'mm/yyyyy',
+                  controller: txtHHThang,
+                ),
                 Gap(5),
-                FilledButton(onPressed: (){
-                  final date = Helper.yM(txtHHThang.text.trim());
-                  if(txtHHThang.text.trim().isNotEmpty){
-                    final lst = ref.watch(ptDoanhSoPVD).where((e)=>e.thang == date).toList();
+                FilledButton(
+                    onPressed: () {
+                      final date = Helper.yM(txtHHThang.text.trim());
+                      if (txtHHThang.text.trim().isNotEmpty) {
+                        final lst = ref.watch(ptDoanhSoPVD).where((e) => e.thang == date).toList();
 
-                    ref.read(ptTinhHoaHong.notifier).state = lst;
-                  }else{
-                    _onRefresh(ref);
-                  }
-
-                }, child: Text('OK'))
-
+                        ref.read(ptTinhHoaHong.notifier).state = lst;
+                      } else {
+                        _onRefresh(ref);
+                      }
+                    },
+                    child: Text('OK'))
               ],
             ),
             Gap(5),
             Expanded(
                 child: DataTable2(
-                  minWidth: 1100,
-                  fixedTopRows: 2,
-                  border: TableBorder.all(color: colorMain, width: .5),
-                  headingTextStyle: textTheme.titleSmall!
-                      .copyWith(fontSize: 12, color: Colors.blue.shade900),
-                  dataTextStyle: textTheme.bodySmall!.copyWith(fontSize: 12),
-                  headingRowHeight: 25,
-                  dataRowHeight: 25,
-                  columnSpacing: 0,
-                  horizontalMargin: 0,
-                  sortColumnIndex: ref.watch(sortTinhHHPVD),
-                  sortAscending: ref.watch(isSortTinhHHPVD),
-                  headingRowColor:
-                  WidgetStatePropertyAll(colorMain.withOpacity(.2)),
-                  empty: Center(
-                      child: Text(
-                        'No data',
-                        style: textTheme.titleMedium!.copyWith(
-                            color: colorMain),
-                      )),
-                  columns: [
-                    const DataColumn2(label: Text(''), fixedWidth: 30),
-                    DataColumn2(
-                        label: _title('Phieu'),
-                        fixedWidth: 60,
-                        onSort: (i, t) {
-                          ref.read(sortTinhHHPVD.notifier).state = i;
-                          if (ref.watch(isSortTinhHHPVD)) {
-                            wTinhHH.sort((a, b) => b.id!.compareTo(a.id!));
-                          } else {
-                            wTinhHH.sort((a, b) => a.id!.compareTo(b.id!));
-                          }
-                          ref
-                              .read(isSortTinhHHPVD.notifier)
-                              .state = !ref.watch(isSortTinhHHPVD);
-                        }),
-                    DataColumn2(
-                        label: _title('MaHD'),
-                        fixedWidth: 80,
-                        onSort: (i, t) {
-                          ref
-                              .read(sortTinhHHPVD.notifier)
-                              .state = i;
-                          if (ref.watch(isSortTinhHHPVD)) {
-                            wTinhHH
-                                .sort((a, b) =>
-                                b.hopDongID.compareTo(a.hopDongID));
-                          } else {
-                            wTinhHH
-                                .sort((a, b) =>
-                                a.hopDongID.compareTo(b.hopDongID));
-                          }
-                          ref
-                              .read(isSortTinhHHPVD.notifier)
-                              .state =
-                          !ref.watch(isSortTinhHHPVD);
-                        }),
-                    DataColumn2(
-                        label: _title('Ngày thu'),
-                        fixedWidth: 120,
-                        onSort: (i, t) {
-                          ref
-                              .read(sortTinhHHPVD.notifier)
-                              .state = i;
-                          if (ref.watch(isSortTinhHHPVD)) {
-                            wTinhHH
-                                .sort((a, b) =>
-                                b.ngayThu!.compareTo(a.ngayThu!));
-                          } else {
-                            wTinhHH
-                                .sort((a, b) =>
-                                a.ngayThu!.compareTo(b.ngayThu!));
-                          }
-                          ref
-                              .read(isSortTinhHHPVD.notifier)
-                              .state =
-                          !ref.watch(isSortTinhHHPVD);
-                        }),
-                    DataColumn2(
-                        label: _title(
-                          'Tên mở rộng',
-                        ),
-                      ),
-                    DataColumn2(label: _title('Người thu'), fixedWidth: 100),
-                    DataColumn2(label: _title('Nội dung')),
-                    DataColumn2(label: _title('DSTháng'),fixedWidth: 100),
-                    DataColumn2(
-                        label: _title('Tháng'),
-                        fixedWidth: 100,
-                        onSort: (i, t) {
-                          ref
-                              .read(sortTinhHHPVD.notifier)
-                              .state = i;
-                          if (ref.watch(isSortTinhHHPVD)) {
-                            wTinhHH.sort((a, b) => b.thang.compareTo(a.thang));
-                          } else {
-                            wTinhHH.sort((a, b) => a.thang.compareTo(b.thang));
-                          }
-                          ref
-                              .read(isSortTinhHHPVD.notifier)
-                              .state = !ref.watch(isSortTinhHHPVD);
+              minWidth: 1100,
+              fixedTopRows: 2,
+              border: TableBorder.all(color: colorMain, width: .5),
+              headingTextStyle: textTheme.titleSmall!.copyWith(fontSize: 12, color: Colors.blue.shade900),
+              dataTextStyle: textTheme.bodySmall!.copyWith(fontSize: 12),
+              headingRowHeight: 25,
+              dataRowHeight: 25,
+              columnSpacing: 0,
+              horizontalMargin: 0,
+              sortColumnIndex: ref.watch(sortTinhHHPVD),
+              sortAscending: ref.watch(isSortTinhHHPVD),
+              headingRowColor: WidgetStatePropertyAll(colorMain.withOpacity(.2)),
+              empty: Center(
+                  child: Text(
+                'No data',
+                style: textTheme.titleMedium!.copyWith(color: colorMain),
+              )),
+              columns: [
+                const DataColumn2(label: Text(''), fixedWidth: 30),
+                const DataColumn2(label: Text(''), fixedWidth: 30),
+                DataColumn2(
+                    label: _title('Phieu'),
+                    fixedWidth: 60,
+                    onSort: (i, t) {
+                      ref.read(sortTinhHHPVD.notifier).state = i;
+                      if (ref.watch(isSortTinhHHPVD)) {
+                        wTinhHH.sort((a, b) => b.id!.compareTo(a.id!));
+                      } else {
+                        wTinhHH.sort((a, b) => a.id!.compareTo(b.id!));
+                      }
+                      ref.read(isSortTinhHHPVD.notifier).state = !ref.watch(isSortTinhHHPVD);
+                    }),
+                DataColumn2(
+                    label: _title('MaHD'),
+                    fixedWidth: 80,
+                    onSort: (i, t) {
+                      ref.read(sortTinhHHPVD.notifier).state = i;
+                      if (ref.watch(isSortTinhHHPVD)) {
+                        wTinhHH.sort((a, b) => b.hopDongID.compareTo(a.hopDongID));
+                      } else {
+                        wTinhHH.sort((a, b) => a.hopDongID.compareTo(b.hopDongID));
+                      }
+                      ref.read(isSortTinhHHPVD.notifier).state = !ref.watch(isSortTinhHHPVD);
+                    }),
+                DataColumn2(
+                    label: _title('Ngày thu'),
+                    fixedWidth: 120,
+                    onSort: (i, t) {
+                      ref.read(sortTinhHHPVD.notifier).state = i;
+                      if (ref.watch(isSortTinhHHPVD)) {
+                        wTinhHH.sort((a, b) => b.ngayThu!.compareTo(a.ngayThu!));
+                      } else {
+                        wTinhHH.sort((a, b) => a.ngayThu!.compareTo(b.ngayThu!));
+                      }
+                      ref.read(isSortTinhHHPVD.notifier).state = !ref.watch(isSortTinhHHPVD);
+                    }),
+                DataColumn2(
+                  label: _title(
+                    'Tên mở rộng',
+                  ),
+                ),
+                DataColumn2(label: _title('Người thu'), fixedWidth: 100),
+                DataColumn2(label: _title('Nội dung')),
+                DataColumn2(label: _title('DSTháng'), fixedWidth: 100),
+                DataColumn2(
+                    label: _title('Tháng'),
+                    fixedWidth: 100,
+                    onSort: (i, t) {
+                      ref.read(sortTinhHHPVD.notifier).state = i;
+                      if (ref.watch(isSortTinhHHPVD)) {
+                        wTinhHH.sort((a, b) => b.thang.compareTo(a.thang));
+                      } else {
+                        wTinhHH.sort((a, b) => a.thang.compareTo(b.thang));
+                      }
+                      ref.read(isSortTinhHHPVD.notifier).state = !ref.watch(isSortTinhHHPVD);
+                    }),
+                DataColumn2(label: _title('MaSPCT'), fixedWidth: 100),
+                DataColumn2(
+                    label: _title('Số tiền'),
+                    numeric: true,
+                    fixedWidth: 80,
+                    onSort: (i, t) {
+                      ref.read(sortTinhHHPVD.notifier).state = i;
+                      if (ref.watch(isSortTinhHHPVD)) {
+                        wTinhHH.sort((a, b) => b.soTien.compareTo(a.soTien));
+                      } else {
+                        wTinhHH.sort((a, b) => a.soTien.compareTo(b.soTien));
+                      }
+                      ref.read(isSortTinhHHPVD.notifier).state = !ref.watch(isSortTinhHHPVD);
+                    }),
 
-                        }),
-                    DataColumn2(label: _title('MaSPCT'),fixedWidth: 100),
-
-                    DataColumn2(
-                        label: _title('Số tiền'),
-                        numeric: true,
-                        fixedWidth: 80,
-                        onSort: (i, t) {
-                          ref
-                              .read(sortTinhHHPVD.notifier)
-                              .state = i;
-                          if (ref.watch(isSortTinhHHPVD)) {
-                            wTinhHH.sort((a, b) =>
-                                b.soTien.compareTo(a.soTien));
-                          } else {
-                            wTinhHH.sort((a, b) =>
-                                a.soTien.compareTo(b.soTien));
-                          }
-                          ref
-                              .read(isSortTinhHHPVD.notifier)
-                              .state =
-                          !ref.watch(isSortTinhHHPVD);
-                        }),
-                    const DataColumn2(label: Text(''), fixedWidth: 30),
-                  ],
-                  rows: _rows(wTinhHH, ref, context),
-                ))
+              ],
+              rows: _rows(wTinhHH, ref, context),
+            ))
           ],
         ),
       ),
     );
   }
 
-
   List<DataRow2> _rows(List<Phieuthu> pt, WidgetRef ref, BuildContext context) {
     List<DataRow2> row = [];
     final wFilter = ref.watch(filterTinhHoaHongPVD);
     final rFilter = ref.read(filterTinhHoaHongPVD.notifier);
-    final wHHThangNow = ref.watch(lstHoaHongAllPVD).map((e)=>e.phieuThuID).toSet().toList();
-
+    final wHHThangNow = ref.watch(lstHoaHongAllPVD).map((e) => e.phieuThuID).toSet().toList();
 
     final cbbPhieu = pt.map((e) => e.id).toSet().toList();
     final cbbMaHD = pt.map((e) => e.hopDongID).toSet().toList();
@@ -342,9 +302,10 @@ class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
     cbbMaSPCT.sort();
     row.add(DataRow2(cells: [
       const DataCell(SizedBox()),
+      const DataCell(SizedBox()),
       DataCell(
         Wdropdown(
-          data: cbbPhieu.map((e)=>DropdownItem(value: e.toString(), title: e.toString())).toList(),
+          data: cbbPhieu.map((e) => DropdownItem(value: e.toString(), title: e.toString())).toList(),
           selected: wFilter.phieu,
           height: 25,
           search: true,
@@ -361,8 +322,7 @@ class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
             //   value: '',
             //   title: '',
             // ),
-            ...cbbMaHD.map(
-                    (e) => DropdownItem(value: e.toString(), title: e.toString()))
+            ...cbbMaHD.map((e) => DropdownItem(value: e.toString(), title: e.toString()))
           ],
           selected: wFilter.maHD,
           height: 25,
@@ -466,11 +426,10 @@ class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
             _onFilter(ref);
           },
         ),
-      ),      DataCell(
+      ),
+      DataCell(
         Wdropdown(
-          data: [
-            ...cbbSoTien.map((e) => DropdownItem(value: Helper.formatNum(e), title: Helper.formatNum(e)))
-          ],
+          data: [...cbbSoTien.map((e) => DropdownItem(value: Helper.formatNum(e), title: Helper.formatNum(e)))],
           selected: wFilter.soTien,
           height: 25,
           search: true,
@@ -480,49 +439,48 @@ class PtTinhHoahongState extends ConsumerState<PtTinhHoahong> {
           },
         ),
       ),
-      const DataCell(SizedBox()),
+
     ]));
 
     row.addAll(List.generate(
-      pt.length, (i) {
+      pt.length,
+      (i) {
         final data = pt[i];
-        WidgetStateProperty<Color?>? color ;
-        if(wHHThangNow.contains(data.id)) color = WidgetStatePropertyAll(Colors.green.withOpacity(.1));
-        return DataRow2(
-            color: color,
-            cells: [
-              DataCell(_itemCenter("${i + 1}")),
-              DataCell(_itemCenter(data.id.toString())),
-              DataCell(_itemCenter(data.hopDongID.toString())),
-              DataCell(_title(Helper.dMy(data.ngayThu))),
-              DataCell(_title(data.tenMoRong)),
-              DataCell(_title(data.nguoiThu)),
-              DataCell(_title(data.noiDung)),
-              DataCell(_title(Helper.My(data.dsThang))),
-              DataCell(_title(Helper.My(data.thang))),
-              DataCell(_title(data.maSPCT)),
-              DataCell(_title(Helper.formatNum(data.soTien))),
-              DataCell(
-                  Align(
-                    alignment: Alignment.center,
-                    child: Tooltip(
-                      message: 'Hoa hồng',
-                      child: Icon(
-                        Icons.currency_exchange,
-                        size: 15,
-                        color: context.colorScheme.primary,
-                      ),
-                    ),
+        WidgetStateProperty<Color?>? color;
+        if (wHHThangNow.contains(data.id)) color = WidgetStatePropertyAll(Colors.green.withOpacity(.1));
+        return DataRow2(color: color, cells: [
+          DataCell(
+              Align(
+                alignment: Alignment.center,
+                child: Tooltip(
+                  message: 'Hoa hồng',
+                  child: Icon(
+                    Icons.currency_exchange,
+                    size: 15,
+                    color: context.colorScheme.primary,
                   ),
-                  onTap: () =>
-                      _onShowAddHH(context, ref, data.id!, data.thang)),
-            ]);
+                ),
+              ),
+              onTap: () =>
+                  _onShowAddHH(context, ref, data.id!, data.thang, Helper.formatNum(data.soTien), data.maSPCT)),
+          DataCell(_itemCenter("${i + 1}")),
+          DataCell(_itemCenter(data.id.toString())),
+          DataCell(_itemCenter(data.hopDongID.toString())),
+          DataCell(_title(Helper.dMy(data.ngayThu))),
+          DataCell(_title(data.tenMoRong)),
+          DataCell(_title(data.nguoiThu)),
+          DataCell(_title(data.noiDung)),
+          DataCell(_title(Helper.My(data.dsThang))),
+          DataCell(_title(Helper.My(data.thang))),
+          DataCell(_title(data.maSPCT)),
+          DataCell(_title(Helper.formatNum(data.soTien))),
+
+        ]);
       },
     ));
     return row;
   }
 }
-
 
 final filterTinhHoaHongPVD = ChangeNotifierProvider.autoDispose<FilterTinhHH>((ref) {
   return FilterTinhHH();
@@ -568,15 +526,18 @@ class FilterTinhHH extends ChangeNotifier {
     nguoiThu = val;
     notifyListeners();
   }
+
   set setSoTien(String? val) {
     soTien = val;
     notifyListeners();
   }
+
   set setDsThang(String? val) {
     dsThang = val;
     notifyListeners();
   }
-  set setMaSPCT(String? val){
+
+  set setMaSPCT(String? val) {
     maSPCT = val;
     notifyListeners();
   }

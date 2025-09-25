@@ -1,71 +1,82 @@
+import 'dart:convert';
+
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:ql_khach/data/data.dart';
 import 'package:ql_khach/utils/utils.dart';
 import 'package:ql_khach/widgets/widgets.dart';
+import 'package:trina_grid/trina_grid.dart';
 
 import '../../providers/providers.dart';
+import 'package:shadcn_flutter/shadcn_flutter.dart' as sh;
 
-class HdHieuluc extends ConsumerWidget {
-  const HdHieuluc({super.key});
+class HdHieuluc extends ConsumerStatefulWidget {
+  HdHieuluc({super.key});
+
+  @override
+  HdHieulucState createState() => HdHieulucState();
+}
+
+class HdHieulucState extends ConsumerState<HdHieuluc> {
+  late TrinaGridStateManager stateManager;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  void onLoad() async{
+    stateManager.removeAllRows();
+    final data = await HopdongData().getViewHopDong(hl: 0);
+    if(data.statusCode == 200){
+      List x = jsonDecode(data.data);
+      final hd = x.map((e)=>Hopdong.fromMap(e)).toList();
+      if(hd.isNotEmpty){
+        stateManager.appendRows(hd.map((e)=>TrinaRow(cells: {
+          'null': TrinaCell(value: ''),
+          'dl': TrinaCell(value: e.maHD),
+          'MaHD': TrinaCell(value: e.maHD),
+          'MaSP': TrinaCell(value: e.maSP),
+          'TenMoRong': TrinaCell(value: e.tenMoRong),
+          // 'TenMoRong': TrinaCell(value: e.tenMoRong),
+        })).toList());
+      }
+    }
+  }
 
   void _onClose(BuildContext context) {
     Navigator.pop(context);
   }
 
-  void _updateHieuLuc(WidgetRef ref, int id){
-    SmartAlert().showInfo('Hợp đồng này sẽ có hiệu lực trở lại',onConfirm: (){
+  void _updateHieuLuc(WidgetRef ref, int id) {
+    SmartAlert().showInfo('Hợp đồng này sẽ có hiệu lực trở lại', onConfirm: () {
       ref.read(hopdongProvider.notifier).onUpdateHieuLuc(id);
     });
   }
 
-
-  void _deleteHopDong(WidgetRef ref, BuildContext context, int id){
+  void _deleteHopDong(WidgetRef ref, BuildContext context, int id) {
     final txtPassword = TextEditingController();
     final user = ref.watch(userProvider);
-
-    showDialog(context: context, builder: (context){
-      return Dialog(
-        child: Container(
-          color: Colors.yellow.shade50,
-          padding: const EdgeInsets.all(10),
-          width: 300,
-          height: 50,
-          child: Row(children: [
-            Wtextfield(hintText: 'Xác minh mật khẩu để xóa',width: 200,autofocus: true,controller: txtPassword,obscureText: true,),
-            const Spacer(),
-            ElevatedButton(onPressed: (){
-              if(txtPassword.text == user!.password){
-                SmartAlert().showInfo('Hợp đồng này sẽ bị xóa vĩnh viễn',onConfirm: (){
-
-                  ref.read(hopdongProvider.notifier).onDeleteHopDong(id).whenComplete((){
-                    Navigator.pop(context);
-                    // ref.refresh(hopdongProvider);
-                    // SmartAlert().showSuccess('Xóa thành công!');
-
-                  });
-                });
-              }else{
-                Navigator.pop(context);
-                SmartAlert().showInfo('Xóa thất bại!');
-              }
-            }, child: const Text('Ok'))
-          ],),
-        ),
-      );
+    SmartAlert().showInfo('Hợp đồng này sẽ bị xóa vĩnh viễn', onConfirm: () {
+      ref.read(hopdongProvider.notifier).onDeleteHopDong(id).whenComplete(() {
+        // Navigator.pop(context);
+        // ref.refresh(hopdongProvider);
+        // SmartAlert().showSuccess('Xóa thành công!');
+      });
     });
   }
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final wListHopDong =
-        ref.watch(lstHopDongProvider).where((e) => e.hieuLuc == false).toList();
-    final wListKhach = ref
-        .watch(lstKhachProvider)
-        .map((e) => {'id': e.maKH, 'tenMoRong': e.tenMoRong})
-        .toList();
+  Widget build(BuildContext context) {
+    final wListHopDong = ref.watch(lstHopDongProvider).where((e) => e.hieuLuc == false).toList();
+    final wListKhach = ref.watch(lstKhachProvider).map((e) => {'id': e.ID, 'tenMoRong': e.tenMoRong}).toList();
+
+
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 30,
         automaticallyImplyLeading: false,
         backgroundColor: context.colorScheme.primary,
         title: Text(
@@ -85,6 +96,21 @@ class HdHieuluc extends ConsumerWidget {
           const Gap(5),
         ],
       ),
+      // body: DataGrid(onLoaded: (e) {
+      //   stateManager = e.stateManager;
+      //   onLoad();
+      // }, columns: [
+      //   DataGridColumn(title: ['', 'null'], width: 25, render: TypeRender.numIndex),
+      //   DataGridColumn(title: ['', 'dl'], width: 25, render: TypeRender.delete,onTapDelete: (id,re){
+      //     _deleteHopDong(ref, context, id,re!);
+      //
+      //   }),
+      //   DataGridColumn(title: ['MaHD', 'MaHD'], width: 80),
+      //   DataGridColumn(title: ['MaSP', 'MaSP'], width: 80),
+      //   DataGridColumn(title: ['Tên mở rộng', 'TenMoRong'], width: 200),
+      //   // DataGridColumn(title: ['Ngày tạo', 'NgayTao'], width: 100),
+      //   // DataGridColumn(title: ['Ngày hết HL','NgayTao'],width: 50),
+      // ]).withPadding(all: 10),
       body: DataTable2(
         minWidth: 700,
         border: TableBorder.all(color: context.colorScheme.primary, width: .5),
@@ -115,8 +141,8 @@ class HdHieuluc extends ConsumerWidget {
             DataCell(Align(child: Text("${hd.id}"),alignment: Alignment.center,)),
             DataCell(Text("${hd.maSP}")),
             DataCell(Text("${tenMoRong}")),
-            DataCell(Text(Helper.dMy(hd.dateCreated,hour: true))),
-            DataCell(Text(Helper.dMy(hd.dateModified,hour: true))),
+            DataCell(Text(Helper.dMy(hd.dateCreated))),
+            DataCell(Text(Helper.dMy(hd.dateModified))),
             DataCell(const Icon(Icons.play_for_work,color: Colors.green,),onTap: ()=>_updateHieuLuc(ref, hd.id!)),
             DataCell(const Icon(Icons.delete,color: Colors.red,),onTap: ()=>_deleteHopDong(ref,context, hd.id!)),
           ]);
@@ -125,3 +151,4 @@ class HdHieuluc extends ConsumerWidget {
     );
   }
 }
+

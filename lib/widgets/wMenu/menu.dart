@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:ql_khach/providers/providers.dart';
 import 'package:ql_khach/utils/utils.dart';
 import 'package:ql_khach/widgets/wMenu/menu_drawer.dart';
+import 'package:shadcn_flutter/shadcn_flutter_extension.dart';
 
 class Menu extends ConsumerWidget {
   Widget child;
@@ -18,21 +19,20 @@ class Menu extends ConsumerWidget {
   }
 
   _onLogout(WidgetRef ref){
-    node.requestFocus();
-    SmartAlert().showInfo('Tiếp tục đăng xuất?',onConfirm: (){
-      ref.read(userProvider.notifier).state = null;
-    },focusNode: node);
+    ref.read(userProvider.notifier).state = null;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final color = context.colorScheme.primary;
+    final color = context.theme.colorScheme.chart3;
     final textTheme = context.textTheme;
     final menuState = ref.watch(menuProvider);
     return Scaffold(
       key: _key,
       drawer: const MenuDrawer(),
       appBar: AppBar(
+
+        toolbarHeight: 40,
         titleSpacing: 5,
         leading: InkWell(
             onTap: () => _key.currentState!.openDrawer(),
@@ -46,7 +46,8 @@ class Menu extends ConsumerWidget {
           style: textTheme.titleMedium!.copyWith(color: Colors.white),
         ),
         actions: [
-          InkWell(onTap: () => _onLogout(ref),child: const Icon(Icons.login_outlined,color: Colors.white,size: 20,)),
+          IconButton(onPressed: () => _onLogout(ref), icon: Icon(Icons.login_outlined,color: Colors.white)),
+          // InkWell(onTap: () => _onLogout(ref),child: const Icon(Icons.login_outlined,color: Colors.white,size: 20,)),
           const Gap(10),
         ],
       ),

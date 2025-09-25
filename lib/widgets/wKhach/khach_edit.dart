@@ -37,7 +37,7 @@ class KhachEdit extends ConsumerWidget {
     }
     final tdoi = ref.watch(khachTheoDoiProvider);
     Khach khachEdit = Khach(
-        maKH: khach == null ? 0 : khach!.maKH,
+        ID: khach == null ? 0 : khach!.ID,
         tenGoi: txtTenGoi.text.trim(),
         tenMoRong: txtTenMoRong.text.trim(),
         diaChi: txtDiaChi.text.trim(),
@@ -85,6 +85,7 @@ class KhachEdit extends ConsumerWidget {
 
       backgroundColor: context.colorScheme.primary.withOpacity(.1),
       appBar: AppBar(
+        toolbarHeight: 30,
         automaticallyImplyLeading: false,
         backgroundColor: context.colorScheme.primary,
         actions: [

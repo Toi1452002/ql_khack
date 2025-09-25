@@ -30,7 +30,7 @@ class Vkhach extends ConsumerWidget {
       SmartAlert().showInfo('Chưa chọn khách');
     }else{
       try{
-        final khach = ref.watch(lstKhachProvider).firstWhere((e)=>e.maKH==maKH);
+        final khach = ref.watch(lstKhachProvider).firstWhere((e)=>e.ID==maKH);
         showDialog(context: context,barrierDismissible: false, builder: (_){
           return Dialog(
             insetPadding: const EdgeInsets.symmetric(horizontal: 10),

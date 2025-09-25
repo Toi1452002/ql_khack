@@ -113,6 +113,7 @@ class _HdGiahanState extends ConsumerState<HdGiahan> {
     return Scaffold(
       backgroundColor: context.colorScheme.primary.withOpacity(.1),
       appBar: AppBar(
+        toolbarHeight: 30,
         automaticallyImplyLeading: false,
         backgroundColor: context.colorScheme.primary,
         title: Text(
@@ -165,19 +166,11 @@ class _HdGiahanState extends ConsumerState<HdGiahan> {
                         onPressed: wghThoiHan != '0'
                             ? null
                             : () async {
-                                DateTime? pickedDate = await showWebDatePicker(
-                                  context: textFieldKey.currentContext!,
-                                  initialDate:
-                                      Helper.dMytoDate(txtNgayHetHan.text),
-                                  firstDate: DateTime.now()
-                                      .subtract(const Duration(days: 7)),
-                                  lastDate: DateTime.now()
-                                      .add(const Duration(days: 14000)),
-                                  width: 250,
-                                  // withoutActionButtons: true,
-                                  //weekendDaysColor: Colors.red,
-                                  //firstDayOfWeekIndex: 1,
-                                );
+                                DateTime? pickedDate = await showDatePicker(
+                                    context: context,
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime.now().add(const Duration(days: 14000)),
+                                    initialDate: Helper.dMytoDate(txtNgayHetHan.text));
                                 if (pickedDate != null) {
                                   txtNgayHetHan.text = DateFormat("dd/MM/yyyy").format(pickedDate);
                                 }

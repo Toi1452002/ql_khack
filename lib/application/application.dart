@@ -1,0 +1,1 @@
+export 'khach/khach_provider.dart';

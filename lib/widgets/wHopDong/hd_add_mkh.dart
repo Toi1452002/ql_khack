@@ -45,6 +45,7 @@ class HdAddMkh extends ConsumerWidget {
       height: 200,
       child: Scaffold(
         appBar: AppBar(
+          toolbarHeight: 30,
           automaticallyImplyLeading: false,
           backgroundColor: context.colorScheme.primary,
           title: Text(

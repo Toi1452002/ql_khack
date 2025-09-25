@@ -44,22 +44,19 @@ class HdEditState extends ConsumerState<HdEdit> {
     }
     Hopdong hopDong = Hopdong(
         id: widget.hopdong?.id,
-        khachID: khach.maKH,
+        khachID: khach.ID,
         moTa: txtMoTa.text.trim(),
         nguonKhach: txtNguonKhach.text.trim(),
         doanhNghiep: dn,
         seri: txtSeri.text.trim(),
-        maKichHoat:
-            txtSeri.text.isNotEmpty ? createBanQuyen(txtSeri.text.trim()) : '',
+        maKichHoat: txtSeri.text.isNotEmpty ? createBanQuyen(txtSeri.text.trim()) : '',
         userNameCreated: user!.username,
         userNameModified: user.username,
         dateModified: Helper.nowYmdT,
         khachOffline: khachOffline ? 1 : 0,
         hieuLuc: hieuLuc,
         maSP: product.productSelect == null ? '' : product.productSelect!,
-        maSPCT: product.productDetailSelect == null
-            ? ''
-            : product.productDetailSelect!,
+        maSPCT: product.productDetailSelect == null ? '' : product.productDetailSelect!,
         thoiHan: thoiHan.toInt,
         phi: txtPhi.text.toDouble,
         thucThu: txtThucThu.text.toDouble);
@@ -117,6 +114,7 @@ class HdEditState extends ConsumerState<HdEdit> {
     return Scaffold(
       backgroundColor: context.colorScheme.primary.withOpacity(.1),
       appBar: AppBar(
+        toolbarHeight: 30,
         automaticallyImplyLeading: false,
         backgroundColor: context.colorScheme.primary,
         title: Text(
@@ -146,19 +144,14 @@ class HdEditState extends ConsumerState<HdEdit> {
                 Wdropdown(
                   label: 'Khách',
                   screenSmall: sizeSmall,
-                  selected: selectKhach == null
-                      ? null
-                      : '${selectKhach.maKH} - ${selectKhach.tenGoi}',
+                  selected: selectKhach == null ? null : '${selectKhach.ID} - ${selectKhach.tenGoi}',
                   search: true,
                   data: lstKhach
-                      .map((e) => DropdownItem(
-                          value: "${e.maKH} - ${e.tenGoi}",
-                          title: "${e.maKH} - ${e.tenGoi}"))
+                      .map((e) => DropdownItem(value: "${e.ID} - ${e.tenGoi}", title: "${e.ID} - ${e.tenGoi}"))
                       .toList(),
                   onChanged: (val) {
                     int maKh = val.toString().split(' -').first.toInt;
-                    ref.read(hdSelectKhachPVD.notifier).state =
-                        lstKhach.firstWhere((e) => e.maKH == maKh);
+                    ref.read(hdSelectKhachPVD.notifier).state = lstKhach.firstWhere((e) => e.ID == maKh);
                   },
                   width: sizeSmall ? 100 : 200,
                 ),
@@ -167,8 +160,7 @@ class HdEditState extends ConsumerState<HdEdit> {
                   label: '',
                   // enabled: false,
                   readOnly: true,
-                  controller: TextEditingController(
-                      text: selectKhach == null ? '' : selectKhach.tenMoRong),
+                  controller: TextEditingController(text: selectKhach == null ? '' : selectKhach.tenMoRong),
                 ),
                 const Gap(10),
                 Expanded(
@@ -192,8 +184,7 @@ class HdEditState extends ConsumerState<HdEdit> {
                       rProduct.changeProduct(val.toString());
                     },
                     data: wProduct.lstProduct
-                        .map((e) => DropdownItem(
-                            value: e.maSP, title: "${e.maSP} ${e.moTa}"))
+                        .map((e) => DropdownItem(value: e.maSP, title: "${e.maSP} ${e.moTa}"))
                         .toList()),
                 Wdropdown(
                     width: sizeSmall ? 100 : 200,
@@ -203,9 +194,7 @@ class HdEditState extends ConsumerState<HdEdit> {
                     onChanged: (val) {
                       rProduct.changeProductDetail(val.toString());
                     },
-                    data: wProduct.lstProductDetail
-                        .map((e) => DropdownItem(value: e.ma, title: e.moTa))
-                        .toList()),
+                    data: wProduct.lstProductDetail.map((e) => DropdownItem(value: e.ma, title: e.moTa)).toList()),
                 const Gap(10),
                 Expanded(
                   child: Wtextfield(
@@ -280,21 +269,26 @@ class HdEditState extends ConsumerState<HdEdit> {
                 readOnly: true,
                 suffixIcon: IconButton(
                     onPressed: () async {
-                      DateTime? pickedDate = await showWebDatePicker(
-                        context: textFieldKey.currentContext!,
-                        initialDate: Helper.dMytoDate(txtNgayHetHan.text),
-                        firstDate:
-                            DateTime.now().subtract(const Duration(days: 3650)),
-                        lastDate:
-                            DateTime.now().add(const Duration(days: 14000)),
-                        width: 250,
-                        // withoutActionButtons: true,
-                        //weekendDaysColor: Colors.red,
-                        //firstDayOfWeekIndex: 1,
-                      );
+                      DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime.now().add(const Duration(days: 14000)),
+                          initialDate: Helper.dMytoDate(txtNgayHetHan.text));
+
+                      // await showWebDatePicker(
+                      //   context: textFieldKey.currentContext!,
+                      //   initialDate: Helper.dMytoDate(txtNgayHetHan.text),
+                      //   firstDate:
+                      //       DateTime.now().subtract(const Duration(days: 3650)),
+                      //   lastDate:
+                      //       DateTime.now().add(const Duration(days: 14000)),
+                      //   width: 250,
+                      //   // withoutActionButtons: true,
+                      //   //weekendDaysColor: Colors.red,
+                      //   //firstDayOfWeekIndex: 1,
+                      // );
                       if (pickedDate != null) {
-                        txtNgayHetHan.text =
-                            DateFormat("dd/MM/yyyy").format(pickedDate);
+                        txtNgayHetHan.text = DateFormat("dd/MM/yyyy").format(pickedDate);
                       }
                     },
                     icon: const Icon(
@@ -347,9 +341,7 @@ class HdEditState extends ConsumerState<HdEdit> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    ElevatedButton(
-                        onPressed: () => _onClose(context, ref),
-                        child: const Text('Hủy')),
+                    ElevatedButton(onPressed: () => _onClose(context, ref), child: const Text('Hủy')),
                     const Gap(15),
                     FilledButton(
                       onPressed: () => _onEditHopDong(ref, context),

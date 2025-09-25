@@ -132,18 +132,11 @@ class PtTaophieuthuState extends ConsumerState<PtTaophieuthu> {
                     readOnly: true,
                     label: 'Ngày thu', suffixIcon: IconButton(
                     onPressed: () async {
-                      DateTime? pickedDate = await showWebDatePicker(
-                        context: textFieldKey.currentContext!,
-                        initialDate: Helper.dMytoDate(txtNgayThu.text),
-                        firstDate: DateTime.now()
-                            .subtract(const Duration(days: 3650)),
-                        lastDate: DateTime.now()
-                            .add(const Duration(days: 14000)),
-                        width: 250,
-                        // withoutActionButtons: true,
-                        //weekendDaysColor: Colors.red,
-                        //firstDayOfWeekIndex: 1,
-                      );
+                      DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime.now().add(const Duration(days: 14000)),
+                          initialDate: Helper.dMytoDate(txtNgayThu.text));
                       if (pickedDate != null) {
                         txtNgayThu.text =
                             DateFormat("dd/MM/yyyy").format(pickedDate);

@@ -3,4 +3,4 @@ export 'path_server.dart';
 export 'config_pluto.dart';
 
 
-const String VERSION = '1.0.6';
+const String VERSION = '1.0.9';
