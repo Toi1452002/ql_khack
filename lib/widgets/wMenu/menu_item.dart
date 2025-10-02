@@ -29,20 +29,22 @@ class MenuItem extends ConsumerWidget {
     final bool isSelect = menuState.select == routerName;
 
     return Padding(
-      padding: const EdgeInsets.all(6),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       child: InkWell(
         onTap: () => _onTapItem(context, ref),
         child: Container(
-          padding: EdgeInsets.all(isSelect ? 10 : 8),
+          padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-              color: color,
-              border: Border.all(color: Colors.white),
-              boxShadow: isSelect
-                  ? [
-                      const BoxShadow(
-                          color: Colors.white, blurRadius: 5, spreadRadius: 2)
-                    ]
-                  : null),
+              color: isSelect ? Colors.white.withValues(alpha: .3) : color,
+              // border: Border.all(color: Colors.white),
+              // boxShadow: isSelect
+              //     ? [
+              //         const BoxShadow(
+              //             color: Colors.white, blurRadius: 5, spreadRadius: 2)
+              //       ]
+              //     : null
+          )
+          ,
           // color: menu.selected == title ? color.primary : null,
           child: Row(
             children: [

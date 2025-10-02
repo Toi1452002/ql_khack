@@ -9,7 +9,7 @@ class Helper{
     if (date == null) return '';
     if (date.runtimeType == DateTime) {
       return DateFormat('dd/MM/yyyy').format(date);
-    } else if (date.runtimeType == String) {
+    } else if (date.runtimeType == String && date.toString().isNotEmpty) {
       return DateFormat('dd/MM/yyyy').format(toDate(date)!);
     }
 

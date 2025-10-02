@@ -19,9 +19,8 @@ class KhachView extends ConsumerStatefulWidget {
 class _KhachViewState extends ConsumerState<KhachView> {
   late TrinaGridStateManager stateManager;
   List<Khach> lstKhach = [];
-
+  bool hideFilter = true;
   // int selectedType = 1;
-  bool hideFilter = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +68,6 @@ class _KhachViewState extends ConsumerState<KhachView> {
                 },
                 child: Text('Thêm'),
               ),
-
               Combobox(
                 value: ref.watch(khachTheoDoiProvider),
                 items: const [
@@ -81,12 +79,23 @@ class _KhachViewState extends ConsumerState<KhachView> {
                   ref.read(khachProvider.notifier).get(theoDoi: val);
                   ref.read(khachTheoDoiProvider.notifier).state = val;
                 },
-              ).sized(width: 150)
+              ).sized(width: 150),
             ],
+
             trailing: [
               SecondaryButton(
                 size: ButtonSize.small,
                 onPressed: () {
+                  setState(() {
+                    hideFilter = !hideFilter;
+                  });
+                },
+                child: const Icon(Icons.filter_alt),
+              ),
+              SecondaryButton(
+                size: ButtonSize.small,
+                onPressed: () {
+                  // stateManager.clearAllColumnFilters();
                   ref.read(khachProvider.notifier).get(theoDoi: ref.watch(khachTheoDoiProvider));
                 },
                 child: const Icon(Icons.refresh),
@@ -95,10 +104,11 @@ class _KhachViewState extends ConsumerState<KhachView> {
           ),
         ],
         child: DataGrid(
+          hideFilter: hideFilter,
           onLoaded: (e) {
             stateManager = e.stateManager;
             stateManager.columnFooterHeight = 25;
-            stateManager.setShowColumnFilter(true);
+            // stateManager.setShowColumnFilter(true);
           },
           onRowDoubleTap: (event) {
             if (event.cell.column.field == "ID") {

@@ -24,32 +24,34 @@ class WidgetTextField extends StatefulWidget {
   final TextStyle? style;
   final Color? color;
   final void Function()? onEditingComplete;
+  final String? label;
+  final void Function()? onPressIcon;
 
-  const WidgetTextField({
-    super.key,
-    this.spacing = 10,
-    this.isNumber = false,
-    this.isDouble = false,
-    this.isUpperCase = false,
-    this.enabled = true,
-    this.maxLines = 1,
-    this.onChanged,
-    this.autofocus = false,
-    this.controller,
-    this.obscureText = false,
-    this.onSubmitted,
-    this.hintText,
-    this.focusNode,
-    this.textAlign = TextAlign.start,
-    this.readOnly = false,
-    this.onTap,
-    this.trailing,
-    this.maxLength,
-    this.style,
-    this.color,
-    this.onEditingComplete,
-    this.hasFocus
-  });
+  const WidgetTextField(
+      {super.key,
+      this.spacing = 10,
+      this.isNumber = false,
+      this.isDouble = false,
+      this.isUpperCase = false,
+      this.enabled = true,
+      this.maxLines = 1,
+      this.onChanged,
+      this.autofocus = false,
+      this.controller,
+      this.obscureText = false,
+      this.onSubmitted,
+      this.hintText,
+      this.focusNode,
+      this.textAlign = TextAlign.start,
+      this.readOnly = false,
+      this.onTap,
+      this.trailing,
+      this.maxLength,
+      this.style,
+      this.color,
+      this.onEditingComplete,
+      this.hasFocus,
+      this.label, this.onPressIcon});
 
   @override
   State<WidgetTextField> createState() => _WidgetTextFieldState();
@@ -57,11 +59,12 @@ class WidgetTextField extends StatefulWidget {
 
 class _WidgetTextFieldState extends State<WidgetTextField> {
   late FocusNode focus;
+
   @override
   void initState() {
     // TODO: implement initState
-    focus = widget.focusNode?? FocusNode();
-    focus.addListener((){
+    focus = widget.focusNode ?? FocusNode();
+    focus.addListener(() {
       widget.hasFocus?.call(focus.hasFocus);
     });
     super.initState();
@@ -69,39 +72,56 @@ class _WidgetTextFieldState extends State<WidgetTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-
-      maxLength: widget.maxLength,
-      readOnly: widget.readOnly,
-      decoration: widget.color != null
-          ? BoxDecoration(
-              color: widget.color,
-              border: Border.all(color: Colors.blue.shade900, width: .5),
-              borderRadius: BorderRadius.circular(3),
-            )
-          : null,
-      placeholder: Text( widget.hintText ?? ''),
-      enabled: widget.enabled,
-      maxLines: widget.maxLines,
-      onChanged: widget.onChanged,
-      controller: widget.controller,
-      obscureText: widget.obscureText,
-      onSubmitted: widget.onSubmitted,
-      onEditingComplete: widget.onEditingComplete,
-      // focusNode: focusNode,
-      focusNode: focus,
-      onTap: widget.onTap,
-      trailing: widget.trailing,
-      textAlign: widget.textAlign,
-      autofocus: widget.autofocus,
-      style: TextStyle(
-        color: widget.enabled ? Colors.black : Colors.gray.shade400
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 4),
-      inputFormatters: [
-        if (widget.isUpperCase) TextInputFormatters.toUpperCase,
-        if (widget.isNumber) FilteringTextInputFormatter.allow(RegExp(r'[\d\,]')),
-        if (widget.isDouble) FilteringTextInputFormatter.allow(RegExp(r'[\d\.]')),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (widget.label != null)
+          Text(
+            widget.label ?? '',
+            softWrap: false,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+        TextField(
+          features: [
+            if(widget.onPressIcon !=null) InputFeature.trailing(OutlineButton(
+              size: const ButtonSize(.6),
+              onPressed: () {
+                widget.onPressIcon?.call();
+              },
+              child: Icon(Icons.code),
+            ))
+          ],
+          maxLength: widget.maxLength,
+          readOnly: widget.readOnly,
+          decoration: widget.color != null
+              ? BoxDecoration(
+                  color: widget.color,
+                  border: Border.all(color: Colors.blue.shade900, width: .5),
+                  borderRadius: BorderRadius.circular(3),
+                )
+              : null,
+          placeholder: Text(widget.hintText ?? ''),
+          enabled: widget.enabled,
+          maxLines: widget.maxLines,
+          onChanged: widget.onChanged,
+          controller: widget.controller,
+          obscureText: widget.obscureText,
+          onSubmitted: widget.onSubmitted,
+          onEditingComplete: widget.onEditingComplete,
+          // focusNode: focusNode,
+          focusNode: focus,
+          onTap: widget.onTap,
+          trailing: widget.trailing,
+          textAlign: widget.textAlign,
+          autofocus: widget.autofocus,
+          style: TextStyle(color: widget.enabled ? Colors.black : Colors.gray.shade400,fontSize: 13),
+          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+          inputFormatters: [
+            if (widget.isUpperCase) TextInputFormatters.toUpperCase,
+            if (widget.isNumber) FilteringTextInputFormatter.allow(RegExp(r'[\d\,]')),
+            if (widget.isDouble) FilteringTextInputFormatter.allow(RegExp(r'[\d\.]')),
+          ],
+        ),
       ],
     );
   }

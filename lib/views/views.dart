@@ -8,3 +8,4 @@ export 'vQuanly_user.dart';
 export 'v_nguoinhanHH.dart';
 export 'bangtinhhoahong/bangtinhhoahong_view.dart';
 export 'khach/khach_view.dart';
+export 'hopdong/hopdong_view.dart';

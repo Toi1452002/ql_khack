@@ -28,6 +28,7 @@ class ThongTinKhachView extends ConsumerStatefulWidget {
   //     ));
   static void show(BuildContext context, {Khach? khach}) {
     showDialog(
+      barrierDismissible: false,
         context: context,
         builder: (context) {
           return ThongTinKhachView(
@@ -112,7 +113,7 @@ class _ThongTinKhachViewState extends ConsumerState<ThongTinKhachView> {
         children: [
           Expanded(
             flex: 1,
-            child: Wtextfield(
+            child: WidgetTextField(
               controller: txtTenGoi,
               label: 'Tên gọi: ',
               // width: 150,
@@ -121,7 +122,7 @@ class _ThongTinKhachViewState extends ConsumerState<ThongTinKhachView> {
           const Gap(10),
           Expanded(
             flex: 2,
-            child: Wtextfield(
+            child: WidgetTextField(
               controller: txtTenMoRong,
               label: 'Tên mở rộng: ',
               // width: 220,
@@ -133,7 +134,7 @@ class _ThongTinKhachViewState extends ConsumerState<ThongTinKhachView> {
       Row(
         children: [
           Expanded(
-            child: Wtextfield(
+            child: WidgetTextField(
               controller: txtDiaChi,
               label: 'Địa chỉ: ',
               // width: 150,
@@ -141,7 +142,7 @@ class _ThongTinKhachViewState extends ConsumerState<ThongTinKhachView> {
           ),
           const Gap(10),
           Expanded(
-            child: Wtextfield(
+            child: WidgetTextField(
               controller: txtKhuVuc,
               label: 'Khu vực: ',
               // width: 220,
@@ -153,14 +154,14 @@ class _ThongTinKhachViewState extends ConsumerState<ThongTinKhachView> {
       Row(
         children: [
           Expanded(
-            child: Wtextfield(
+            child: WidgetTextField(
               controller: txtTenCty,
               label: 'Tên cty: ',
             ),
           ),
           const Gap(10),
           Expanded(
-            child: Wtextfield(
+            child: WidgetTextField(
               label: 'Điện thoại: ',
               controller: txtDienThoai,
             ),
@@ -168,12 +169,12 @@ class _ThongTinKhachViewState extends ConsumerState<ThongTinKhachView> {
         ],
       ),
       const Gap(15),
-      Wtextfield(
+      WidgetTextField(
         label: 'Nguồn liên hệ: ',
         controller: txtNguonLienHe,
       ),
       const Gap(15),
-      Wtextfield(
+      WidgetTextField(
         label: 'Ghi chú: ',
         controller: txtGhiChu,
         maxLines: 3,

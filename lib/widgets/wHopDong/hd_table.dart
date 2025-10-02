@@ -47,7 +47,7 @@ class HdTable extends ConsumerWidget {
                        DropdownItem(value: '0', title: 'Không thời hạn'),
                        DropdownItem(value: '1', title: 'Tháng'),
                        DropdownItem(value: '2', title: 'Quý'),
-                       DropdownItem(value: '3', title: 'Năm'),
+                         DropdownItem(value: '3', title: 'Năm'),
                        DropdownItem(value: '4', title: 'Dùng thử (3N)'),
                      ],
                      onChanged: (val) {

@@ -6,7 +6,6 @@ import 'package:ql_khach/data/data.dart';
 import 'package:ql_khach/providers/providers.dart';
 import 'package:ql_khach/utils/utils.dart';
 import 'package:ql_khach/widgets/widgets.dart';
-import 'package:vph_web_date_picker/vph_web_date_picker.dart';
 
 class HdEdit extends ConsumerStatefulWidget {
   Hopdong? hopdong;
@@ -53,7 +52,7 @@ class HdEditState extends ConsumerState<HdEdit> {
         userNameCreated: user!.username,
         userNameModified: user.username,
         dateModified: Helper.nowYmdT,
-        khachOffline: khachOffline ? 1 : 0,
+        // khachOffline: khachOffline ? 1 : 0,
         hieuLuc: hieuLuc,
         maSP: product.productSelect == null ? '' : product.productSelect!,
         maSPCT: product.productDetailSelect == null ? '' : product.productDetailSelect!,
@@ -307,17 +306,6 @@ class HdEditState extends ConsumerState<HdEdit> {
                 const Text('Doanh nghiệp'),
               ],
             ),
-            // if (widget.hopdong == null)
-            //   Row(
-            //     children: [
-            //       Checkbox(
-            //           value: wKhachOff,
-            //           onChanged: (val) {
-            //             rKhachOff.state = val!;
-            //           }),
-            //       const Text('Khách offline')
-            //     ],
-            //   ),
             if (widget.hopdong != null)
               Row(
                 children: [

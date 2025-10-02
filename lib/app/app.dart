@@ -14,7 +14,7 @@ class App extends ConsumerWidget {
     return ShadcnApp.router(
       // theme: ref.watch(themeDataProvider),
       theme: ThemeData(
-        colorScheme: ColorSchemes.lightBlue(),
+        colorScheme: ColorSchemes.lightBlue,
         radius: .3,
         typography: Typography.geist(
           small: TextStyle(fontSize: 13),

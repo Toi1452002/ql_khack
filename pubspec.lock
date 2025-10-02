@@ -65,14 +65,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
-  clay_containers:
-    dependency: "direct main"
-    description:
-      name: clay_containers
-      sha256: "84039b8afd1ab168caaefee862611810add7e77a6c6d03d02788a56bd60e76c1"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.4"
   clock:
     dependency: transitive
     description:
@@ -477,22 +469,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.4"
-  phosphor_flutter:
-    dependency: "direct main"
-    description:
-      name: phosphor_flutter
-      sha256: "8a14f238f28a0b54842c5a4dc20676598dd4811fcba284ed828bd5a262c11fde"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
-  pixel_snap:
-    dependency: transitive
-    description:
-      name: pixel_snap
-      sha256: "677410ea37b07cd37ecb6d5e6c0d8d7615a7cf3bd92ba406fd1ac57e937d1fb0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.5"
   platform:
     dependency: transitive
     description:
@@ -561,10 +537,10 @@ packages:
     dependency: "direct main"
     description:
       name: shadcn_flutter
-      sha256: ae32d20d23d1a7c3921a047ed41d011a85eca0a39e3d77286f7ab28f0ff887d0
+      sha256: "4a4dff36252101f344c77fd659d791c52c808cfe3ab68deea4ea949d942d9e5b"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.38"
+    version: "0.0.39"
   shared_preferences:
     dependency: transitive
     description:
@@ -718,10 +694,10 @@ packages:
     dependency: "direct main"
     description:
       name: trina_grid
-      sha256: eca1e066cbc0e3c5ad343c58e5111cd9cc68e1594a1bd3241f202c666726e1a2
+      sha256: d75b835f61feb90dbda2a0bc40773b2601fa2b84ec595e2422824ea06d8f8efc
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.12"
+    version: "2.0.2"
   typed_data:
     dependency: transitive
     description:
@@ -746,30 +722,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "15.0.0"
-  vph_common_widgets:
-    dependency: transitive
-    description:
-      name: vph_common_widgets
-      sha256: "596f6655cd67d3aba8f81e77d2c5148d86378c4f19469acf06afc84009606c09"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.3"
-  vph_web_date_picker:
-    dependency: "direct main"
-    description:
-      name: vph_web_date_picker
-      sha256: "12d17dc13d2dc4793f2bd0add4f7a1665d047c7e99005b6b08043694601b5b05"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.5"
   web:
     dependency: transitive
     description:
       name: web
-      sha256: d43c1d6b787bf0afad444700ae7f4db8827f701bc61c255ac8d328c6f4d52062
+      sha256: "868d88a33d8a87b18ffc05f9f030ba328ffefba92d6c127917a2ba740f9cfe4a"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.1.1"
   xdg_directories:
     dependency: transitive
     description:

@@ -28,24 +28,24 @@ class HdHieulucState extends ConsumerState<HdHieuluc> {
     super.initState();
   }
 
-  void onLoad() async{
-    stateManager.removeAllRows();
-    final data = await HopdongData().getViewHopDong(hl: 0);
-    if(data.statusCode == 200){
-      List x = jsonDecode(data.data);
-      final hd = x.map((e)=>Hopdong.fromMap(e)).toList();
-      if(hd.isNotEmpty){
-        stateManager.appendRows(hd.map((e)=>TrinaRow(cells: {
-          'null': TrinaCell(value: ''),
-          'dl': TrinaCell(value: e.maHD),
-          'MaHD': TrinaCell(value: e.maHD),
-          'MaSP': TrinaCell(value: e.maSP),
-          'TenMoRong': TrinaCell(value: e.tenMoRong),
-          // 'TenMoRong': TrinaCell(value: e.tenMoRong),
-        })).toList());
-      }
-    }
-  }
+  // void onLoad() async{
+  //   stateManager.removeAllRows();
+  //   final data = await HopdongData().getViewHopDong(hl: 0);
+  //   if(data.statusCode == 200){
+  //     List x = jsonDecode(data.data);
+  //     final hd = x.map((e)=>Hopdong.fromMap(e)).toList();
+  //     if(hd.isNotEmpty){
+  //       stateManager.appendRows(hd.map((e)=>TrinaRow(cells: {
+  //         'null': TrinaCell(value: ''),
+  //         'dl': TrinaCell(value: e.maHD),
+  //         'MaHD': TrinaCell(value: e.maHD),
+  //         'MaSP': TrinaCell(value: e.maSP),
+  //         'TenMoRong': TrinaCell(value: e.tenMoRong),
+  //         // 'TenMoRong': TrinaCell(value: e.tenMoRong),
+  //       })).toList());
+  //     }
+  //   }
+  // }
 
   void _onClose(BuildContext context) {
     Navigator.pop(context);

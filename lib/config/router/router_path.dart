@@ -17,7 +17,7 @@ final router = [
             path: '/hop-dong',
             name: RouterName.hopDong,
             pageBuilder: (_, state) => buildPageTransition(
-                context: _, state: state, child: VHopDong())),
+                context: _, state: state, child: HopDongView())),
         GoRoute(
             path: '/khach',
             name: RouterName.khach,

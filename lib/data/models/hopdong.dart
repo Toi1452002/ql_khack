@@ -2,7 +2,6 @@ import 'package:ql_khach/utils/extension.dart';
 
 class Hopdong {
   int? id;
-  int? maHD;
   int khachID;
   String ngayHetHan;
   String? ngayTruyCap;
@@ -11,8 +10,8 @@ class Hopdong {
   String tenMoRong;
   String tenCty;
   String maKichHoat;
-  String maSP;
-  String maSPCT;
+  String? maSP;
+  String? maSPCT;
   int thoiHan;
   double phi;
   double thucThu;
@@ -26,11 +25,10 @@ class Hopdong {
   bool hieuLuc;
   String dateCreated;
   String seri;
-  int khachOffline;
+  // int khachOffline;
   Hopdong({
-    this.maHD,
     this.id,
-    this.khachOffline = 0,
+    // this.khachOffline = 0,
     this.khachID = 0,
     this.moTa = '',
     this.nguonKhach = '',
@@ -49,8 +47,8 @@ class Hopdong {
     this.daKichHoat = 0,
     this.dateCreated = '',
     this.hieuLuc = false,
-    required this.maSP,
-    required this.maSPCT,
+     this.maSP,
+     this.maSPCT,
     required this.thoiHan,
     required this.phi,
     required this.thucThu,
@@ -70,7 +68,7 @@ class Hopdong {
       'Phi':phi,
       'ThucThu':thucThu,
       'NgayHetHan':ngayHetHan,
-      'KhachOffline': khachOffline,
+      // 'KhachOffline': khachOffline,
       'Seri': seri,
       'MaKichHoat': maKichHoat,
       'UserNameCreated': userNameCreated,
@@ -83,7 +81,6 @@ class Hopdong {
     return Hopdong(
 
       id: map['ID'].toString().toInt,
-      maHD: map['MaHD'].toString().toInt,
       ngayHetHan: map['NgayHetHan'] ?? '',
       tenGoi: map['TenGoi'] ?? '',
       tenMoRong: map['TenMoRong'] ?? '',
@@ -95,15 +92,15 @@ class Hopdong {
       phi: map['Phi'].toString().toDouble,
       thucThu: map['ThucThu'].toString().toDouble,
       ngayTruyCap: map['NgayTruyCap'] ?? '',
-      soNgayConLai: map['Con'].toString().toInt,
+      soNgayConLai: int.tryParse(map['Con'].toString()),
       moTa: map['MoTa']??'',
       nguonKhach: map['NguonKhach']??'',
       khachID: map['KhachID'].toString().toInt,
       doanhNghiep: map['DN']==null ? false : map['DN'].toString().toBool,
       daKichHoat: map['DaKichHoat'].toString().toInt,
       hieuLuc:map['HieuLuc']==null ? false : map['HieuLuc'].toString().toBool,
-      dateCreated: map['DateCreated']??'',
-      dateModified: map['DateModified']??'',
+      // dateCreated: map['DateCreated']??'',
+      // dateModified: map['DateModified']??'',
       seri: map['Seri']??''
     );
   }

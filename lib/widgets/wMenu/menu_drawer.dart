@@ -17,9 +17,10 @@ class MenuDrawer extends ConsumerWidget {
     final user = ref.read(userProvider);
     return Drawer(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      width: 250,
+      width: 300,
       backgroundColor: color,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ColoredBox(
             color: color,
@@ -54,6 +55,8 @@ class MenuDrawer extends ConsumerWidget {
             icon: Icons.home,
             routerName: RouterName.home,
           ),
+          Divider(endIndent: 10,indent: 10,),
+          menuLabel('DANH MỤC'),
           MenuItem(
             icon: Icons.featured_play_list_outlined,
             routerName: RouterName.khach,
@@ -62,25 +65,43 @@ class MenuDrawer extends ConsumerWidget {
             icon: Icons.event_note_outlined,
             routerName: RouterName.hopDong,
           ),
+          Divider(endIndent: 10,indent: 10,),
+          menuLabel('THU'),
           MenuItem(
             icon: Icons.table_chart,
             routerName: RouterName.bangKePhieuThu,
           ),
+          Divider(endIndent: 10,indent: 10,),
+          menuLabel('BẢNG KÊ'),
           MenuItem(
             icon: Icons.currency_exchange,
             routerName: RouterName.hoaHong,
           ),
-          if(user.level>1)MenuItem(
-            icon: Icons.person,
-            routerName: RouterName.nguoinhanHH,
-          ),
-          if(user.level>1) MenuItem(
-            icon: Icons.supervised_user_circle_outlined,
-            routerName: RouterName.qlUser,
-          ),
+          if (user.level > 1)
+            MenuItem(
+              icon: Icons.person,
+              routerName: RouterName.nguoinhanHH,
+            ),
+          const Divider(endIndent: 10,indent: 10,),
+          if (user.level > 1)menuLabel('HỆ THỐNG'),
+          if (user.level > 1)
+            MenuItem(
+              icon: Icons.supervised_user_circle_outlined,
+              routerName: RouterName.qlUser,
+            ),
           const Spacer(),
-          Text('Phiên bản: ${VERSION}',style: textStyle),
+          Text('Phiên bản: ${VERSION}', style: textStyle),
         ],
+      ),
+    );
+  }
+
+  menuLabel(String title) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
       ),
     );
   }

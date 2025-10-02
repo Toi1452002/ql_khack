@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:shadcn_flutter/shadcn_flutter_extension.dart';
 import 'package:string_validator/string_validator.dart';
 import 'package:trina_grid/trina_grid.dart';
@@ -123,7 +122,7 @@ class _DataGridState extends State<DataGrid> {
                 style: e.textStyle,
               );
         }
-        if (e.render != TypeRender.delete && e.render != TypeRender.numIndex) {
+        if (e.render != TypeRender.delete && e.render != TypeRender.numIndex && e.title.first!='') {
           titleRenderer = (re) {
             final List<TrinaRow> filteredRows =
                 re.stateManager.filterRows.isNotEmpty ? re.stateManager.filterRows : re.stateManager.rows;
@@ -266,9 +265,9 @@ class _DataGridState extends State<DataGrid> {
 
   // Lấy giá trị duy nhất từ cột dựa trên dữ liệu đã lọc
   List<dynamic> _getUniqueValues(String field, List<TrinaRow> currentRows, {bool str = false}) {
-    final data = currentRows.map((row) => row.cells[field]!.value.toString()).toSet().toList();
-    if (data.every((e) => isNumeric(e)) && !str) {
-      List<double> x = data.map((e) => double.parse(e)).toList();
+    final data = currentRows.map((row) => row.cells[field]?.value.toString()).toSet().toList();
+    if (data.every((e) => e!=null && isNumeric(e)) && !str) {
+      List<double> x = data.map((e) => double.parse(e!)).toList();
       x.sort();
       return x.map((e) {
         if (isInt(e.toString())) {
@@ -279,8 +278,8 @@ class _DataGridState extends State<DataGrid> {
       }).toList();
     }
 
-    if (data.every((e) => e.contains('/') && e.length == 10)) {
-      List<DateTime?> x = data.map((e) => Helper.strToDate(e)).toList();
+    if (data.every((e) => e!=null && e.contains('/') && e.length == 10)) {
+      List<DateTime?> x = data.map((e) => Helper.strToDate(e!)).toList();
       x.sort();
       return x.map((e) {
         return Helper.dMy(e);

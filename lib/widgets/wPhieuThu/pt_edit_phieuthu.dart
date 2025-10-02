@@ -7,7 +7,6 @@ import 'package:ql_khach/providers/phieuthu/phieuthu.dart';
 import 'package:ql_khach/providers/providers.dart';
 import 'package:ql_khach/utils/utils.dart';
 import 'package:ql_khach/widgets/widgets.dart';
-import 'package:vph_web_date_picker/vph_web_date_picker.dart';
 
 class PtEditPhieuthu extends ConsumerStatefulWidget {
   Phieuthu phieuthu;
@@ -68,6 +67,7 @@ class PtEditPhieuthuState extends ConsumerState<PtEditPhieuthu> {
       height: 350,
       child: Scaffold(
         appBar: AppBar(
+          toolbarHeight: 30,
           automaticallyImplyLeading: false,
           backgroundColor: context.colorScheme.primary,
           actions: [

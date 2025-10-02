@@ -1,7 +1,5 @@
-import 'package:clay_containers/clay_containers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:gap/gap.dart';
 import 'package:ql_khach/providers/providers.dart';
 import 'package:ql_khach/utils/alert.dart';
 import 'package:ql_khach/utils/extension.dart';
@@ -63,7 +61,7 @@ class Vlogin extends ConsumerWidget {
               const Gap(30),
               WidgetCustomRow(columnWidths: {0:80},items: [
                 Text('Username').medium,
-                Wtextfield(
+                WidgetTextField(
                   controller: txtUsername,
                   autofocus: true,
                 )
@@ -71,7 +69,7 @@ class Vlogin extends ConsumerWidget {
               const Gap(15),
               WidgetCustomRow(columnWidths: {0:80},items: [
                 Text('Password').medium,
-                Wtextfield(
+                WidgetTextField(
                   onSubmitted: (val){
                     _onLogin(ref);
                   },

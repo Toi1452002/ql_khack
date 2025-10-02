@@ -49,7 +49,7 @@ class HdTableNotifier extends ChangeNotifier{
       final hd = hopDong[i];
       return PlutoRow(cells: {
         'num':PlutoCell(value: i+1),
-        'MaHD':PlutoCell(value: hd.maHD),
+        // 'MaHD':PlutoCell(value: hd.maHD),
         'MaSP':PlutoCell(value: hd.maSP),
         'MaSPCT':PlutoCell(value: hd.maSPCT),
         'TenGoi':PlutoCell(value: hd.tenGoi),
